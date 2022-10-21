@@ -33,6 +33,7 @@ namespace CCModuleClient
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
             base.OnGameStart(game, gameStarterObject);
+            game.AddGameHandler<ServerMessageHandler>();
         }
 
         
@@ -48,7 +49,6 @@ namespace CCModuleClient
         {
             base.OnMissionBehaviorInitialize(mission);
             mission.AddMissionBehavior(new AdminPanelMissionView());
-            mission.AddMissionBehavior(new AdminPanelNetworkMessagesClient());
 
             ChatMessageManager.AddMessage("CCModule is running", 55, 189, 40);
         }

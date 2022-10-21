@@ -38,5 +38,10 @@ namespace CCModuleClient
                 typeof(MPChatVM).GetMethod("AddChatLine", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(vm, new object[] { mPChatLineVM });
             }
         }
+
+        public static void ServerMessage(string message)
+        {
+            AddMessage(message, 217, 85, 41);
+        }
     }
 }

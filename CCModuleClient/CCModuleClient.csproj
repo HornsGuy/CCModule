@@ -92,13 +92,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminPanel.cs" />
-    <Compile Include="AdminPanelNetworkMessagesClient.cs" />
     <Compile Include="CCModuleClientSubModule.cs" />
     <Compile Include="ChatMessageManager.cs" />
     <Compile Include="FromClient\APEndWarmupMessage.cs" />
     <Compile Include="FromClient\OpenAdminPanelMessage.cs" />
     <Compile Include="FromServer\AdminLoginMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerMessageHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

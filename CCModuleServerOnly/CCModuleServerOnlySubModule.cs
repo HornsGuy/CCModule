@@ -26,18 +26,16 @@ namespace CCModuleServerOnly
             game.AddGameHandler<CCModuleGameHandler>();
         }
 
-
-        public override void OnMultiplayerGameStart(Game game, object starterObject)
+        protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
-            base.OnMultiplayerGameStart(game, starterObject);
-
+            base.OnGameStart(game, gameStarterObject);
+            game.AddGameHandler<ClientMessageHandler>();
         }
 
         public override void OnMissionBehaviorInitialize(Mission mission)
         {
             base.OnMissionBehaviorInitialize(mission);
             mission.AddMissionBehavior(new EquipmentOverrideMissionBehavior());
-            mission.AddMissionBehavior(new AdminPanelNetworkMessages());
         }
 
     }

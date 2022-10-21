@@ -85,7 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminPanel.cs" />
-    <Compile Include="AdminPanelNetworkMessages.cs" />
+    <Compile Include="ClientMessageHandler.cs" />
     <Compile Include="CCModuleGameHandler.cs" />
     <Compile Include="CCModuleServerOnlySubModule.cs" />
     <Compile Include="EquipmentOverrideMissionBehavior.cs" />
