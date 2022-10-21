@@ -13,6 +13,7 @@ using NetworkMessages.FromServer;
 using TaleWorlds.MountAndBlade.Network.Messages;
 using TaleWorlds.ObjectSystem;
 using TaleWorlds.MountAndBlade.Diamond;
+using System.Reflection;
 
 namespace CCModuleServerOnly
 {
@@ -24,6 +25,25 @@ namespace CCModuleServerOnly
         public string cultureTeam2;
         public bool cultureVote;
         public bool mapVote;
+        public int roundTime;
+        public int warmupTime;
+        public int mapTime;
+        public int numRounds;
+
+        public override string ToString()
+        {
+            return "gameType: " + gameType + "\n" +
+                "mapId: " + mapId + "\n" +
+                "cultureTeam1: " + cultureTeam1 + "\n" +
+                "cultureTeam2: " + cultureTeam2 + "\n" +
+                "cultureTeam2: " + cultureTeam2 + "\n" +
+                "cultureVote: " + cultureVote + "\n" +
+                "mapVote: " + mapVote + "\n" +
+                "roundTime: " + roundTime + "\n" +
+                "warmupTime: " + warmupTime + "\n" +
+                "mapTime: " + mapTime + "\n" +
+                "numRounds: " + numRounds + "\n";
+        }
     }
 
     class StartMissionThread
@@ -125,9 +145,16 @@ namespace CCModuleServerOnly
             return toReturn;
         }
 
+        int GetOptionInt(MultiplayerOptions.OptionType optionType)
+        {
+            int toReturn;
+            MultiplayerOptions.Instance.GetOptionFromOptionType(optionType).GetValue(out toReturn);
+            return toReturn;
+        }
+
         MissionData getMultiplayerOptionsState()
         {
-            MissionData toReturn;
+            MissionData toReturn = new MissionData();
 
             toReturn.cultureVote = MultiplayerIntermissionVotingManager.Instance.IsCultureVoteEnabled;
             toReturn.mapVote = MultiplayerIntermissionVotingManager.Instance.IsMapVoteEnabled;
@@ -135,6 +162,10 @@ namespace CCModuleServerOnly
             toReturn.cultureTeam2 = GetOptionString(MultiplayerOptions.OptionType.CultureTeam2);
             toReturn.mapId = GetOptionString(MultiplayerOptions.OptionType.Map);
             toReturn.gameType = GetOptionString(MultiplayerOptions.OptionType.GameType);
+            toReturn.roundTime = GetOptionInt(MultiplayerOptions.OptionType.RoundTimeLimit);
+            toReturn.warmupTime = GetOptionInt(MultiplayerOptions.OptionType.WarmupTimeLimit);
+            toReturn.mapTime = GetOptionInt(MultiplayerOptions.OptionType.MapTimeLimit);
+            toReturn.numRounds = GetOptionInt(MultiplayerOptions.OptionType.RoundTotal);
 
             return toReturn;
         }
@@ -314,18 +345,151 @@ namespace CCModuleServerOnly
             StartMission(currentState);
         }
 
+        public void BroadcastMessage(string message)
+        {
+            GameNetwork.BeginBroadcastModuleEvent();
+            GameNetwork.WriteMessage(new ServerMessage(message));
+            GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None);
+        }
+
+        public void ResetMission()
+        {
+            Mission.Current.ResetMission();
+        }
+
+        public void SetRoundTime(int roundTime)
+        {
+            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.RoundTimeLimit).UpdateValue(roundTime);
+
+            MissionLobbyComponent mlc = Mission.Current.GetMissionBehavior<MissionLobbyComponent>();
+
+            if (mlc != null)
+            {
+                MultiplayerTimerComponent timer = GetMissionTimer();
+
+                timer.StartTimerAsServer((float)(roundTime));
+
+                SyncMultiplayerOptions();
+
+                GameNetwork.BeginBroadcastModuleEvent();
+                GameNetwork.WriteMessage((GameNetworkMessage)new MissionStateChange(mlc.CurrentMultiplayerState, timer.GetCurrentTimerStartTime().NumberOfTicks));
+                GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None);
+            }
+        }
+
+        private MultiplayerWarmupComponent.WarmupStates? GetWarmupState()
+        {
+            MultiplayerWarmupComponent mwc = Mission.Current.GetMissionBehavior<MultiplayerWarmupComponent>();
+
+            if (mwc != null)
+            {
+                FieldInfo type = typeof(MultiplayerWarmupComponent).GetField("_warmupState", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                return (MultiplayerWarmupComponent.WarmupStates)type.GetValue(mwc);
+            }
+
+            return null;
+        }
+
+        private MultiplayerTimerComponent GetWarmupTimer()
+        {
+            MultiplayerWarmupComponent mwc = Mission.Current.GetMissionBehavior<MultiplayerWarmupComponent>();
+
+            if (mwc != null)
+            {
+                FieldInfo type = typeof(MultiplayerWarmupComponent).GetField("_timerComponent", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                return (MultiplayerTimerComponent)type.GetValue(mwc);
+            }
+
+            return null;
+        }
+
+        public void SetWarmupTime(int warmupTime)
+        {
+            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.WarmupTimeLimit).UpdateValue(warmupTime);
+
+            MultiplayerWarmupComponent mwc = Mission.Current.GetMissionBehavior<MultiplayerWarmupComponent>();
+
+            if (mwc != null)
+            {
+
+                if (GetWarmupState() == MultiplayerWarmupComponent.WarmupStates.InProgress)
+                {
+
+                    MultiplayerTimerComponent timer = GetWarmupTimer();
+                    timer.StartTimerAsServer((float)(warmupTime * 60));
+
+                    SyncMultiplayerOptions();
+
+                    GameNetwork.BeginBroadcastModuleEvent();
+                    GameNetwork.WriteMessage((GameNetworkMessage)new WarmupStateChange(MultiplayerWarmupComponent.WarmupStates.InProgress, timer.GetCurrentTimerStartTime().NumberOfTicks));
+                    GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None);
+                    Debug.Print("Changed!!!!", 0, Debug.DebugColor.Magenta);
+                }
+            }
+        }
+
+        private void SyncMultiplayerOptions()
+        {
+            GameNetwork.BeginBroadcastModuleEvent();
+            GameNetwork.WriteMessage((GameNetworkMessage)new MultiplayerOptionsInitial());
+            GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None);
+
+            GameNetwork.BeginBroadcastModuleEvent();
+            GameNetwork.WriteMessage((GameNetworkMessage)new MultiplayerOptionsImmediate());
+            GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None);
+        }
+
+        private MultiplayerTimerComponent GetMissionTimer()
+        {
+            MissionLobbyComponent mlc = Mission.Current.GetMissionBehavior<MissionLobbyComponent>();
+
+            if (mlc != null)
+            {
+                Type typ = typeof(MissionLobbyComponent);
+                FieldInfo type = typ.GetField("_timerComponent", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                return (MultiplayerTimerComponent)type.GetValue(mlc);
+            }
+
+            return null;
+        }
+
+        public void SetMapTime(int mapTime)
+        {
+            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.MapTimeLimit).UpdateValue(mapTime);
+
+            MissionLobbyComponent mlc = Mission.Current.GetMissionBehavior<MissionLobbyComponent>();
+
+            if (mlc != null)
+            {
+                MultiplayerTimerComponent timer = GetMissionTimer();
+
+                timer.StartTimerAsServer((float)(mapTime * 60));
+
+                SyncMultiplayerOptions();
+
+                GameNetwork.BeginBroadcastModuleEvent();
+                GameNetwork.WriteMessage((GameNetworkMessage)new MissionStateChange(mlc.CurrentMultiplayerState, timer.GetCurrentTimerStartTime().NumberOfTicks));
+                GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None);
+            }
+
+        }
+
         public void SetMultiplayerOptions(MissionData missionData, MultiplayerOptions.MultiplayerOptionsAccessMode opetionSet = MultiplayerOptions.MultiplayerOptionsAccessMode.CurrentMapOptions)
         {
             MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.GameType, opetionSet).UpdateValue(missionData.gameType);
             MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.Map, opetionSet).UpdateValue(missionData.mapId);
             MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.CultureTeam1, opetionSet).UpdateValue(missionData.cultureTeam1);
             MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.CultureTeam2, opetionSet).UpdateValue(missionData.cultureTeam2);
+            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.RoundTimeLimit, opetionSet).UpdateValue(missionData.roundTime);
+            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.WarmupTimeLimit, opetionSet).UpdateValue(missionData.warmupTime);
+            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.MapTimeLimit, opetionSet).UpdateValue(missionData.mapTime);
+            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.RoundTotal, opetionSet).UpdateValue(missionData.numRounds);
             MultiplayerIntermissionVotingManager.Instance.IsCultureVoteEnabled = missionData.cultureVote;
             MultiplayerIntermissionVotingManager.Instance.IsMapVoteEnabled = missionData.mapVote;
             MultiplayerIntermissionVotingManager.Instance.ClearVotes();
             MultiplayerIntermissionVotingManager.Instance.SetVotesOfCulture(missionData.cultureTeam1, 100);
             MultiplayerIntermissionVotingManager.Instance.SetVotesOfCulture(missionData.cultureTeam2, 100);
-
+            Debug.Print(missionData.ToString(), 0, Debug.DebugColor.Yellow);
         }
 
         private void SyncMultiplayerOptionsToClients()
@@ -358,6 +522,16 @@ namespace CCModuleServerOnly
             }
         }
 
+        public void EndWarmup()
+        {
+            MultiplayerWarmupComponent warmup = Mission.Current.GetMissionBehavior<MultiplayerWarmupComponent>();
+
+            if (warmup != null)
+            {
+                typeof(MultiplayerWarmupComponent).GetMethod("EndWarmup", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(warmup, null);
+            }
+        }
+
         private void EndMissionThenStartMission(MissionData missionData)
         {
             MissionListener listener = new MissionListener();
@@ -367,6 +541,8 @@ namespace CCModuleServerOnly
             MultiplayerIntermissionVotingManager.Instance.IsMapVoteEnabled = false;
 
             EndingCurrentMissionThenStartingNewMission = true;
+
+            EndWarmup();
 
             listener.setMissionData(missionData);
             DedicatedCustomServerSubModule.Instance.EndMission();

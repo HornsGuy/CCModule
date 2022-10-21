@@ -79,6 +79,9 @@
     <Reference Include="TaleWorlds.MountAndBlade.View">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\Native\bin\Win64_Shipping_Client\TaleWorlds.MountAndBlade.View.dll</HintPath>
     </Reference>
+    <Reference Include="TaleWorlds.MountAndBlade.ViewModelCollection">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.MountAndBlade.ViewModelCollection.dll</HintPath>
+    </Reference>
     <Reference Include="TaleWorlds.ObjectSystem">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.ObjectSystem.dll</HintPath>
     </Reference>
@@ -89,8 +92,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminPanel.cs" />
+    <Compile Include="AdminPanelNetworkMessagesClient.cs" />
     <Compile Include="CCModuleClientSubModule.cs" />
+    <Compile Include="ChatMessageManager.cs" />
     <Compile Include="FromClient\APEndWarmupMessage.cs" />
+    <Compile Include="FromClient\OpenAdminPanelMessage.cs" />
+    <Compile Include="FromServer\AdminLoginMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

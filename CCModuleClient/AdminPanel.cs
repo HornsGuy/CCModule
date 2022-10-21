@@ -12,9 +12,6 @@ using CCModuleNetworkMessages.FromClient;
 
 namespace CCModuleClient
 {
-    class AdminPanelUI
-    { 
-    }
 
     class AdminPanelMissionView : MissionView 
     {
@@ -39,32 +36,36 @@ namespace CCModuleClient
             base.OnMissionScreenTick(dt);
 
             
-            if (Input.IsKeyPressed(TaleWorlds.InputSystem.InputKey.F8) && areAdmin())
+            if (Input.IsKeyPressed(TaleWorlds.InputSystem.InputKey.F8))
             {
-                if(!isPanelOpen())
+                if(CCModuleClientSubModule.playerIsAdmin)
                 {
-                    OpenAdminPanelUI();
+                    if (!isPanelOpen())
+                    {
+                        OpenAdminPanelUI();
+                    }
+                    else
+                    {
+                        CloseAdminPanelUI();
+                    }
                 }
                 else
                 {
-                    CloseAdminPanelUI();
+                    GameNetwork.BeginModuleEventAsClient();
+                    GameNetwork.WriteMessage(new OpenAdminPanelMessage());
+                    GameNetwork.EndModuleEventAsClient();
                 }
+
                 
             }
 
             if(_dataSource!=null)
             {
-
                 if (_dataSource.cancelPressed)
                 {
                     CloseAdminPanelUI();
                 }
             }
-        }
-
-        private bool areAdmin()
-        {
-            return true;
         }
 
         private bool isPanelOpen()
