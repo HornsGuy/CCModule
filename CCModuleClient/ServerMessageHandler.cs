@@ -37,7 +37,6 @@ namespace CCModuleClient
         {
             GameNetwork.NetworkMessageHandlerRegisterer handlerRegisterer = new GameNetwork.NetworkMessageHandlerRegisterer(mode);
             handlerRegisterer.Register<AdminLoginMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<AdminLoginMessage>(this.HandleAdminLoginMessage));
-            handlerRegisterer.Register<ChangeAgentCosmeticEquipmentMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<ChangeAgentCosmeticEquipmentMessage>(this.HandleChangeAgentEquipmentMessage));
         }
 
         private void HandleAdminLoginMessage(AdminLoginMessage message)
@@ -46,10 +45,6 @@ namespace CCModuleClient
             CCModuleClientSubModule.playerIsAdmin = true;
         }
 
-        private void HandleChangeAgentEquipmentMessage(ChangeAgentCosmeticEquipmentMessage message)
-        {
-
-        }
 
         public override void OnAfterSave()
         {
