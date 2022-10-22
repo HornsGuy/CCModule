@@ -92,6 +92,7 @@
     <Compile Include="FromClient\APEndWarmupMessage.cs" />
     <Compile Include="FromClient\OpenAdminPanelMessage.cs" />
     <Compile Include="FromServer\AdminLoginMessage.cs" />
+    <Compile Include="FromServer\AvailableMapsMessage.cs" />
     <Compile Include="PlayerManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
