@@ -49,14 +49,6 @@ namespace CCModuleClient
                         CloseAdminPanelUI();
                     }
                 }
-                else
-                {
-                    GameNetwork.BeginModuleEventAsClient();
-                    GameNetwork.WriteMessage(new OpenAdminPanelMessage());
-                    GameNetwork.EndModuleEventAsClient();
-                }
-
-                
             }
 
             if(_dataSource!=null)
@@ -230,7 +222,7 @@ namespace CCModuleClient
         private async void ExecuteEndWarmup()
         {
             GameNetwork.BeginModuleEventAsClient();
-            GameNetwork.WriteMessage(new APEndWarmupMessage(GameNetwork.MyPeer));
+            GameNetwork.WriteMessage(new APEndWarmupMessage());
             GameNetwork.EndModuleEventAsClient();
         }
 

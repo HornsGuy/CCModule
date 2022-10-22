@@ -114,8 +114,11 @@ namespace CCModuleServerOnly
         {
             public static void ThreadProc(Object obj)
             {
-                Thread.Sleep(250);
                 Tuple<string, List<Tuple<EquipmentIndex, string>>> overrideInfo = (Tuple<string, List<Tuple<EquipmentIndex, string>>>)obj;
+                while (AdminPanel.Instance.GetPlayerNetworkPeerFromID(overrideInfo.Item1).ControlledAgent == null)
+                {
+                    Thread.Sleep(10);
+                }
                 AdminPanel.Instance.GivePlayerAgentCosmeticEquipment(overrideInfo.Item1, overrideInfo.Item2);
             }
         }

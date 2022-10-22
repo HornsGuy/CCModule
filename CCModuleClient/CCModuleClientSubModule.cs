@@ -49,8 +49,6 @@ namespace CCModuleClient
         {
             base.OnMissionBehaviorInitialize(mission);
             mission.AddMissionBehavior(new AdminPanelMissionView());
-
-            ChatMessageManager.AddMessage("CCModule is running", 55, 189, 40);
         }
 
     }

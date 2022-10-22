@@ -5,6 +5,7 @@ using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.Network.Messages;
+using TaleWorlds.ObjectSystem;
 
 namespace CCModuleServerOnly
 {
@@ -26,7 +27,7 @@ namespace CCModuleServerOnly
         private void AddRemoveMessageHandlers(
       GameNetwork.NetworkMessageHandlerRegisterer.RegisterMode mode)
         {
-            Debug.Print("Registered Messaged", 0, Debug.DebugColor.Magenta);
+            Debug.Print("Listening for client messages", 0, Debug.DebugColor.Magenta);
             GameNetwork.NetworkMessageHandlerRegisterer handlerRegisterer = new GameNetwork.NetworkMessageHandlerRegisterer(mode);
             handlerRegisterer.Register<APEndWarmupMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<APEndWarmupMessage>(this.HandleEndWarmupMessage));
             handlerRegisterer.Register<OpenAdminPanelMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<OpenAdminPanelMessage>(this.HandleOpenAdminPanelMessage));
@@ -34,13 +35,13 @@ namespace CCModuleServerOnly
 
         private bool HandleEndWarmupMessage(NetworkCommunicator peer, APEndWarmupMessage message)
         {
-            Debug.Print("End Warmup Message",0,Debug.DebugColor.Yellow);
+            Debug.Print("Temp Message: HandleEndWarmupMessage", 0, Debug.DebugColor.Magenta);
+
             return true;
         }
 
         private bool HandleOpenAdminPanelMessage(NetworkCommunicator peer, OpenAdminPanelMessage message)
         {
-            Debug.Print("!!!Received Message!!!",0,Debug.DebugColor.Yellow);
             GameNetwork.BeginModuleEventAsServer(peer);
             GameNetwork.WriteMessage(new AdminLoginMessage());
             GameNetwork.EndModuleEventAsServer();

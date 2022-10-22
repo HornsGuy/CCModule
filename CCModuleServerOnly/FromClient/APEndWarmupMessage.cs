@@ -6,12 +6,6 @@ namespace CCModuleNetworkMessages.FromClient
     [DefineGameNetworkMessageTypeForMod(GameNetworkMessageSendType.FromClient)]
     public sealed class APEndWarmupMessage : GameNetworkMessage
     {
-        public NetworkCommunicator PlayerPeer { get; private set; }
-
-        public APEndWarmupMessage(NetworkCommunicator playerPeer)
-        {
-            this.PlayerPeer = playerPeer;
-        }
 
         public APEndWarmupMessage()
         {
@@ -19,14 +13,11 @@ namespace CCModuleNetworkMessages.FromClient
 
         protected override bool OnRead()
         {
-            bool bufferReadValid = true;
-            this.PlayerPeer = GameNetworkMessage.ReadNetworkPeerReferenceFromPacket(ref bufferReadValid);
-            return bufferReadValid;
+            return true;
         }
 
         protected override void OnWrite()
         {
-            GameNetworkMessage.WriteNetworkPeerReferenceToPacket(this.PlayerPeer);
         }
 
         protected override MultiplayerMessageFilter OnGetLogFilter() => MultiplayerMessageFilter.Mission;
