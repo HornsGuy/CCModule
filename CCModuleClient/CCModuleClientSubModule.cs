@@ -22,8 +22,6 @@ namespace CCModuleClient
 
         public static bool playerIsAdmin = false;
 
-        MissionGauntletClassLoadout classSelectionView;
-
         public override void OnGameInitializationFinished(Game game)
         {
             base.OnGameInitializationFinished(game);
@@ -84,7 +82,7 @@ namespace CCModuleClient
         {
             base.OnMissionBehaviorInitialize(mission);
             mission.AddMissionBehavior(new AdminPanelMissionView());
-            classSelectionView = mission.GetMissionBehavior<MissionGauntletClassLoadout>();
+            mission.AddMissionBehavior(new TroopCapBehavior(mission.GetMissionBehavior<MissionGauntletClassLoadout>()));
 
         }
 

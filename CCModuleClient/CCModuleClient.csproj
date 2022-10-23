@@ -94,6 +94,7 @@
     <Compile Include="AdminPanel.cs" />
     <Compile Include="CCModuleClientSubModule.cs" />
     <Compile Include="ChatMessageManager.cs" />
+    <Compile Include="ClassOverridesBehavior.cs" />
     <Compile Include="FromClient\APEndWarmupMessage.cs" />
     <Compile Include="FromClient\OpenAdminPanelMessage.cs" />
     <Compile Include="FromServer\AdminLoginMessage.cs" />
