@@ -707,6 +707,11 @@ namespace CCModuleServerOnly
             return false;
         }
 
+        public void KickPlayer(NetworkCommunicator peer)
+        {
+            DedicatedCustomServerSubModule.Instance.DedicatedCustomGameServer.KickPlayer(peer.VirtualPlayer.Id, false);
+        }
+
         public bool GivePlayerAgentCosmeticEquipment(NetworkCommunicator networkPeer, List<Tuple<EquipmentIndex, string>> itemsToGive)
         {
             if (networkPeer.ControlledAgent != null)

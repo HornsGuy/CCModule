@@ -64,9 +64,24 @@ namespace CCModuleServerOnly
             GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None);
         }
 
+        private bool CheckPeerIsAdminBanOtherwise(NetworkCommunicator peer)
+        {
+            if(PlayerManager.Instance.PlayerIsAdmin(peer.VirtualPlayer.Id.ToString()))
+            {
+                return true;
+            }
+            else
+            {
+                // Ban the person using a hacked client
+                PlayerManager.Instance.BanPlayer(peer.VirtualPlayer.UserName, peer.VirtualPlayer.Id.ToString());
+                AdminPanel.Instance.KickPlayer(peer);
+                return false;
+            }
+        }
+
         private bool HandleUpdateTroopCapMessage(NetworkCommunicator peer, APUpdateTroopCapMessage message)
         {
-            if(AdminPanelData.Instance.UpdateTroopCapsIfDifferent(message.InfantryCap, message.RangedCap, message.CavalryCap))
+            if(CheckPeerIsAdminBanOtherwise(peer) && AdminPanelData.Instance.UpdateTroopCapsIfDifferent(message.InfantryCap, message.RangedCap, message.CavalryCap))
             {
                 SyncTroopCapWithClients();
             }
