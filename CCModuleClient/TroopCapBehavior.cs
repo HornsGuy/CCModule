@@ -10,7 +10,7 @@ using TaleWorlds.MountAndBlade.ViewModelCollection.Multiplayer.ClassLoadout;
 
 namespace CCModuleClient
 {
-    class TroopCapBehavior : MissionBehavior
+    public class TroopCapBehavior : MissionBehavior
     {
         MissionGauntletClassLoadout _loadoutMissionView;
         MultiplayerClassLoadoutVM _vm;
@@ -26,7 +26,12 @@ namespace CCModuleClient
         public TroopCapBehavior(MissionGauntletClassLoadout loadoutMissionView)
         {
             _loadoutMissionView = loadoutMissionView;
-            OnClassLoadoutUIOpened += RefreshVM;
+            OnClassLoadoutUIOpened += RefreshLoadoutVM;
+
+            // Defaults for testing
+            troopTypePercent.Add("Infantry", 0);
+            troopTypePercent.Add("Ranged", 100);
+            troopTypePercent.Add("Cavalry", 100);
         }
 
         public override void OnMissionTick(float dt)
@@ -56,29 +61,20 @@ namespace CCModuleClient
             }   
         }
 
-        private Dictionary<string,float> GetCurrentTeamClassTypeBreakdown()
+        public static Dictionary<string,float> GetCurrentTeamClassTypeBreakdown(List<int> myTeamTroopIndexes, Dictionary<int, string> troopIndexToTroopType)
         {
-            Dictionary<int, string> troopTypeCategoriesForFaction = GetCurrentFactionTroopIndexToTroopTypeDictionary();
-
-            MissionPeer myMissionPeer = GameNetwork.MyPeer.GetComponent<MissionPeer>();
 
             // Add the default 3 we care about
             Dictionary<string, float> troopTypeCount = new Dictionary<string, float>();
             troopTypeCount.Add("Infantry",0);
-            troopTypeCount.Add("Range",0);
+            troopTypeCount.Add("Ranged",0);
             troopTypeCount.Add("Cavalry",0);
 
             float total = 0;
-            foreach (var peer in GameNetwork.NetworkPeers)
+            foreach (var troopIndex in myTeamTroopIndexes)
             {
-                MissionPeer mp = peer.GetComponent<MissionPeer>();
-                
-                // Only check players on our team
-                if(mp != null && mp.Team.Side == myMissionPeer.Team.Side)
-                {
-                    troopTypeCount[troopTypeCategoriesForFaction[mp.SelectedTroopIndex]] += 1;
-                    total += 1;
-                }
+                troopTypeCount[troopIndexToTroopType[troopIndex]] += 1;
+                total += 1;
             }
 
             // Take the totals and convert it into the breakdown
@@ -92,12 +88,24 @@ namespace CCModuleClient
             return toReturn;
         }
 
-        public Dictionary<int, string> GetCurrentFactionTroopIndexToTroopTypeDictionary()
+        public static Dictionary<string,bool> GetTroopClassAvailabilityDictionary(Dictionary<string, float> currentTroopBreakdown, Dictionary<string, int> troopCapPercent)
+        {
+            Dictionary<string, bool> toReturn = new Dictionary<string, bool>();
+
+            foreach (var keyVal in currentTroopBreakdown)
+            {
+                toReturn.Add(keyVal.Key, keyVal.Value < troopCapPercent[keyVal.Key]);
+            }
+
+            return toReturn;
+        }
+
+        private Dictionary<int, string> GetTroopIndexToTroopTypeDictionary(List<HeroClassGroupVM> classGroups)
         {
             Dictionary<int, string> toReturn = new Dictionary<int, string>();
 
             int troopIndex = 0;
-            foreach (var troopTypeGroup in _vm.Classes)
+            foreach (var troopTypeGroup in classGroups)
             {
                 foreach (var troopClass in troopTypeGroup.SubClasses)
                 {
@@ -109,18 +117,20 @@ namespace CCModuleClient
             return toReturn;
         }
 
-        public void RefreshVM()
+        public void RefreshLoadoutVM()
         {
             if(_vm != null)
             {
                 ResetVM();
-                Dictionary<string, float> currentTroopBreakdown = GetCurrentTeamClassTypeBreakdown();
+
+                Dictionary<string, float> currentTroopBreakdown = GetCurrentTeamClassTypeBreakdown(PlayerWrapper.GetMyTeamTroopIndeces(),GetTroopIndexToTroopTypeDictionary(_vm.Classes.ToList()));
+                Dictionary<string, bool> classIsAvailable = GetTroopClassAvailabilityDictionary(currentTroopBreakdown, troopTypePercent);
                 foreach (var troopTypeGroup in _vm.Classes)
                 {
                     int currentTypePercent = troopTypePercent[troopTypeGroup.Name];
                     if(currentTypePercent != 100)
                     {
-                        bool shouldBeLocked = currentTroopBreakdown[troopTypeGroup.Name] > currentTypePercent;
+                        bool shouldBeLocked = !classIsAvailable[troopTypeGroup.Name];
                         foreach (var troopClass in troopTypeGroup.SubClasses)
                         {
                             if(shouldBeLocked)
@@ -130,7 +140,7 @@ namespace CCModuleClient
                                 {
                                     troopClass.IsSelected = false;
                                     MissionPeer mp = GameNetwork.MyPeer.GetComponent<MissionPeer>();
-                                    mp.SelectedTroopIndex = 0; // TODO: This won't work if Infantry is set to 0
+                                    mp.SelectedTroopIndex = 0; // TODO: This won't work if Infantry Cap is set to 0
                                 }
                             }
                         }

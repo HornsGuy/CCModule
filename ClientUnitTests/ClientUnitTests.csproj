@@ -5,11 +5,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{97EC62F2-0776-45AD-8096-D4513DEFF3F3}</ProjectGuid>
+    <ProjectGuid>{F4352780-572F-4D79-9943-3B19836351A2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ServerTests</RootNamespace>
-    <AssemblyName>ServerTests</AssemblyName>
+    <RootNamespace>ClientUnitTests</RootNamespace>
+    <AssemblyName>ClientUnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -65,18 +65,22 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="TaleWorlds.MountAndBlade">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\TaleWorlds.MountAndBlade.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PlayerManagerTests.cs" />
+    <Compile Include="TroopCapTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitTestHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CCModuleServerOnly\CCModuleServerOnly.csproj">
-      <Project>{17f1166f-1f5b-4646-a73b-475094b496f7}</Project>
-      <Name>CCModuleServerOnly</Name>
+    <ProjectReference Include="..\CCModuleClient\CCModuleClient.csproj">
+      <Project>{14dd9878-0533-49f5-9997-ddae75b6bec4}</Project>
+      <Name>CCModuleClient</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
