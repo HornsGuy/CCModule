@@ -1,6 +1,8 @@
 ﻿
 using CCModuleNetworkMessages.FromClient;
 using CCModuleNetworkMessages.FromServer;
+using NetworkMessages.FromClient;
+using NetworkMessages.FromServer;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
@@ -32,6 +34,7 @@ namespace CCModuleServerOnly
             handlerRegisterer.Register<APEndWarmupMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<APEndWarmupMessage>(this.HandleEndWarmupMessage));
             handlerRegisterer.Register<ClientListeningMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<ClientListeningMessage>(this.HandleClientListeningMessage));
             handlerRegisterer.Register<APUpdateTroopCapMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<APUpdateTroopCapMessage>(this.HandleUpdateTroopCapMessage));
+            handlerRegisterer.Register<RequestTroopIndexChange>(new GameNetworkMessage.ClientMessageHandlerDelegate<RequestTroopIndexChange>(this.HandleRequestTroopIndexChange));
         }
 
         private bool HandleEndWarmupMessage(NetworkCommunicator peer, APEndWarmupMessage message)
@@ -86,6 +89,22 @@ namespace CCModuleServerOnly
                 SyncTroopCapWithClients();
             }
             
+            return true;
+        }
+
+        private bool HandleRequestTroopIndexChange(NetworkCommunicator peer, RequestTroopIndexChange message)
+        {
+            // Get what type of troop the peer is changing to and see if they are exceeding the troop cap
+            MissionPeer missionPeer = peer.GetComponent<MissionPeer>();
+            if(!TroopCapServerLogic.Instance.CheckIfPlayerTroopIndexIsUnderCap(missionPeer))
+            {
+                //missionPeer.SelectedTroopIndex = 0;
+                //GameNetwork.BeginBroadcastModuleEvent();
+                //GameNetwork.WriteMessage((GameNetworkMessage)new UpdateSelectedTroopIndex(peer, 0));
+                //GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.ExcludeOtherTeamPlayers, peer);
+                Debug.Print("Received Selection Request", 0, Debug.DebugColor.Magenta);
+            }
+
             return true;
         }
 

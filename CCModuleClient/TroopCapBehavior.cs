@@ -1,12 +1,16 @@
-﻿using System;
+﻿using ClientServerShared;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using TaleWorlds.Core;
+using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.GauntletUI.Mission.Multiplayer;
 using TaleWorlds.MountAndBlade.ViewModelCollection.Multiplayer.ClassLoadout;
+using TaleWorlds.ObjectSystem;
 
 namespace CCModuleClient
 {
@@ -20,6 +24,9 @@ namespace CCModuleClient
         public event OnClassLoadoutUIOpenedEvent OnClassLoadoutUIOpened;
 
         public bool uiOpened = false;
+
+        Dictionary<int, string> troopIndexToTypeTeam1 = new Dictionary<int, string>();
+        Dictionary<int, string> troopIndexToTypeTeam2 = new Dictionary<int, string>();
 
         private Dictionary<string, int> troopTypePercent = new Dictionary<string, int>();
 
@@ -42,9 +49,28 @@ namespace CCModuleClient
             OnClassLoadoutUIOpened += RefreshLoadoutVM;
 
             // Defaults
-            troopTypePercent.Add("Infantry", infCap);
-            troopTypePercent.Add("Ranged", rangeCap);
-            troopTypePercent.Add("Cavalry", cavCap);
+            troopTypePercent.Add(new TextObject("{=1Bm1Wk1v}Infantry").ToString(), infCap);
+            troopTypePercent.Add(new TextObject("{=rangedtroop}Ranged").ToString(), rangeCap);
+            troopTypePercent.Add(new TextObject("{=YVGtcLHF}Cavalry").ToString(), cavCap);
+        }
+
+        public void Setup()
+        {
+            troopIndexToTypeTeam1 = PopulateTroopIndexToTypeDictionary(MultiplayerClassDivisions.GetMPHeroClasses(MBObjectManager.Instance.GetObject<BasicCultureObject>(MultiplayerOptions.OptionType.CultureTeam1.GetStrValue())).ToList());
+            troopIndexToTypeTeam2 = PopulateTroopIndexToTypeDictionary(MultiplayerClassDivisions.GetMPHeroClasses(MBObjectManager.Instance.GetObject<BasicCultureObject>(MultiplayerOptions.OptionType.CultureTeam2.GetStrValue())).ToList());
+        }
+
+        private Dictionary<int, string> PopulateTroopIndexToTypeDictionary(List<MultiplayerClassDivisions.MPHeroClass> classes)
+        {
+            Dictionary<int, string> toReturn = new Dictionary<int, string>();
+            int index = 0;
+            foreach (var troopClass in classes)
+            {
+                toReturn.Add(index, troopClass.ClassGroup.Name.ToString());
+                index++;
+            }
+
+            return toReturn;
         }
 
         public override void OnMissionTick(float dt)
@@ -74,45 +100,6 @@ namespace CCModuleClient
             }   
         }
 
-        public static Dictionary<string,float> GetCurrentTeamClassTypeBreakdown(List<int> myTeamTroopIndexes, Dictionary<int, string> troopIndexToTroopType)
-        {
-
-            // Add the default 3 we care about
-            Dictionary<string, float> troopTypeCount = new Dictionary<string, float>();
-            troopTypeCount.Add("Infantry",0);
-            troopTypeCount.Add("Ranged",0);
-            troopTypeCount.Add("Cavalry",0);
-
-            float total = 0;
-            foreach (var troopIndex in myTeamTroopIndexes)
-            {
-                troopTypeCount[troopIndexToTroopType[troopIndex]] += 1;
-                total += 1;
-            }
-
-            // Take the totals and convert it into the breakdown
-            Dictionary<string, float> toReturn = new Dictionary<string, float>();
-
-            foreach (var keyVal in troopTypeCount)
-            {
-                toReturn.Add(keyVal.Key, (keyVal.Value / total) * 100.0f);
-            }
-
-            return toReturn;
-        }
-
-        public static Dictionary<string,bool> GetTroopClassAvailabilityDictionary(Dictionary<string, float> currentTroopBreakdown, Dictionary<string, int> troopCapPercent)
-        {
-            Dictionary<string, bool> toReturn = new Dictionary<string, bool>();
-
-            foreach (var keyVal in currentTroopBreakdown)
-            {
-                toReturn.Add(keyVal.Key, keyVal.Value < troopCapPercent[keyVal.Key]);
-            }
-
-            return toReturn;
-        }
-
         private Dictionary<int, string> GetTroopIndexToTroopTypeDictionary(List<HeroClassGroupVM> classGroups)
         {
             Dictionary<int, string> toReturn = new Dictionary<int, string>();
@@ -132,9 +119,9 @@ namespace CCModuleClient
 
         private void UpdateTroopCapsInternal(int infCap, int rangeCap, int cavCap)
         {
-            troopTypePercent["Infantry"] = infCap;
-            troopTypePercent["Ranged"] = rangeCap;
-            troopTypePercent["Cavalry"] = cavCap;
+            troopTypePercent[new TextObject("{=1Bm1Wk1v}Infantry").ToString()] = infCap;
+            troopTypePercent[new TextObject("{=rangedtroop}Ranged").ToString()] = rangeCap;
+            troopTypePercent[new TextObject("{=YVGtcLHF}Cavalry").ToString()] = cavCap;
         }
 
         public void RefreshLoadoutVM()
@@ -142,8 +129,8 @@ namespace CCModuleClient
             if(_vm != null)
             {
                 ResetVM();
-                Dictionary<string, float> currentTroopBreakdown = GetCurrentTeamClassTypeBreakdown(PlayerWrapper.GetMyTeamTroopIndeces(),GetTroopIndexToTroopTypeDictionary(_vm.Classes.ToList()));
-                Dictionary<string, bool> classIsAvailable = GetTroopClassAvailabilityDictionary(currentTroopBreakdown, troopTypePercent);
+                Dictionary<string, float> currentTroopBreakdown = TroopCapLogic.GetCurrentTeamClassTypeBreakdown(PlayerWrapper.GetMyTeamTroopIndeces(),GetTroopIndexToTroopTypeDictionary(_vm.Classes.ToList()), troopTypePercent.Keys.ToList());
+                Dictionary<string, bool> classIsAvailable = TroopCapLogic.GetTroopClassAvailabilityDictionary(currentTroopBreakdown, troopTypePercent);
                 foreach (var troopTypeGroup in _vm.Classes)
                 {
                     int currentTypePercent = troopTypePercent[troopTypeGroup.Name];

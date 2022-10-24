@@ -41,6 +41,7 @@ namespace CCModuleServerOnly
         {
             base.OnMissionBehaviorInitialize(mission);
             mission.AddMissionBehavior(new EquipmentOverrideMissionBehavior());
+            TroopCapServerLogic.Instance.Setup();
         }
 
     }

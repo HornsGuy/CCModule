@@ -1,14 +1,13 @@
-﻿using CCModuleClient;
+﻿using ClientServerShared;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 
-namespace ClientUnitTests
+namespace ClientServerSharedTests
 {
     [TestClass]
-    public class TroopCapTests
+    public class TroopCapLogicTests
     {
-
         [TestMethod]
         public void TestGetCurrentTroopClassPercents()
         {
@@ -33,7 +32,7 @@ namespace ClientUnitTests
             expected.Add("Ranged", 33.333f);
             expected.Add("Cavalry", 16.666f);
 
-            Dictionary<string, float> actual = TroopCapBehavior.GetCurrentTeamClassTypeBreakdown(myTeamTroopIndeces, troopIndexToClass);
+            Dictionary<string, float> actual = TroopCapLogic.GetCurrentTeamClassTypeBreakdown(myTeamTroopIndeces, troopIndexToClass, new List<string>() { "Infantry", "Ranged", "Cavalry"});
 
             foreach (var keyVal in expected)
             {
@@ -63,7 +62,7 @@ namespace ClientUnitTests
             expected.Add("Ranged", true);
             expected.Add("Cavalry", true);
 
-            Dictionary<string,bool> actual = TroopCapBehavior.GetTroopClassAvailabilityDictionary(currentBreakdown, troopCapPercents);
+            Dictionary<string, bool> actual = TroopCapLogic.GetTroopClassAvailabilityDictionary(currentBreakdown, troopCapPercents);
 
             foreach (var keyVal in expected)
             {
@@ -91,7 +90,7 @@ namespace ClientUnitTests
             expected.Add("Ranged", false);
             expected.Add("Cavalry", false);
 
-            Dictionary<string, bool> actual = TroopCapBehavior.GetTroopClassAvailabilityDictionary(currentBreakdown, troopCapPercents);
+            Dictionary<string, bool> actual = TroopCapLogic.GetTroopClassAvailabilityDictionary(currentBreakdown, troopCapPercents);
 
             foreach (var keyVal in expected)
             {
@@ -119,7 +118,7 @@ namespace ClientUnitTests
             expected.Add("Ranged", false);
             expected.Add("Cavalry", false);
 
-            Dictionary<string, bool> actual = TroopCapBehavior.GetTroopClassAvailabilityDictionary(currentBreakdown, troopCapPercents);
+            Dictionary<string, bool> actual = TroopCapLogic.GetTroopClassAvailabilityDictionary(currentBreakdown, troopCapPercents);
 
             foreach (var keyVal in expected)
             {

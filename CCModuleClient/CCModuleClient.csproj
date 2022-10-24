@@ -124,5 +124,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerMessageHandler.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ClientServerShared\ClientServerShared.csproj">
+      <Project>{a0f4aa55-81c9-424a-ba82-f3106dd46dbe}</Project>
+      <Name>ClientServerShared</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
