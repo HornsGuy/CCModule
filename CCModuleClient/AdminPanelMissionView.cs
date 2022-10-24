@@ -13,7 +13,7 @@ using CCModuleNetworkMessages.FromClient;
 namespace CCModuleClient
 {
 
-    class AdminPanelMissionView : MissionView 
+    public class AdminPanelMissionView : MissionView 
     {
 
         GauntletLayer _layer;
@@ -22,7 +22,7 @@ namespace CCModuleClient
 
         public AdminPanelMissionView()
         {
-            this.ViewOrderPriority = 3;
+            this.ViewOrderPriority = 10;
         }
 
         public override void OnMissionScreenFinalize()
@@ -68,7 +68,7 @@ namespace CCModuleClient
         private void OpenAdminPanelUI()
         {
             _dataSource = new AdminPanelVM();
-            _layer = new GauntletLayer(3);
+            _layer = new GauntletLayer(this.ViewOrderPriority);
             
             
             _movie = _layer.LoadMovie("CCAdminPanel", _dataSource);
@@ -160,6 +160,10 @@ namespace CCModuleClient
             // Get current factions for index
             this.Faction1 = new SelectorVM<SelectorItemVM>(factionStrings, 0, new Action<SelectorVM<SelectorItemVM>>(this.OnFaction1Changed));
             this.Faction2 = new SelectorVM<SelectorItemVM>(factionStrings, 0, new Action<SelectorVM<SelectorItemVM>>(this.OnFaction2Changed));
+
+            this.InfantryCapPercentage = AdminPanelClientData.Instance.InfantryCap;
+            this.ArcherCapPercentage = AdminPanelClientData.Instance.RangedCap;
+            this.CavCapPercentage = AdminPanelClientData.Instance.CavalryCap;
         }
 
         private void OnGameTypeChanged(SelectorVM<SelectorItemVM> obj)
@@ -196,17 +200,24 @@ namespace CCModuleClient
 
         private void OnInfCapChanged()
         {
-            // Tell server to change warmup time
+            SendTroopCapUpdateMessage();
         }
 
         private void OnArcherCapChanged()
         {
-            // Tell server to change warmup time
+            SendTroopCapUpdateMessage();
         }
         
         private void OnCavCapChanged()
         {
-            // Tell server to change warmup time
+            SendTroopCapUpdateMessage();
+        }
+
+        private void SendTroopCapUpdateMessage()
+        {
+            GameNetwork.BeginModuleEventAsClient();
+            GameNetwork.WriteMessage(new APUpdateTroopCapMessage(InfantryCapPercentage, ArcherCapPercentage, CavCapPercentage));
+            GameNetwork.EndModuleEventAsClient();
         }
 
         private async void ExecuteDone()

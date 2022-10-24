@@ -45,7 +45,7 @@ namespace ServerTests
         public void LoadTest()
         {
             // Copy files to be loaded
-            foreach (string testFile in Directory.GetFiles(@"..\..\TestFiles\PlayerManager"))
+            foreach (string testFile in Directory.GetFiles(@"..\..\..\TestFiles\PlayerManager"))
             {
                 File.Copy(testFile, @".\"+ Path.GetFileName(testFile), true);
             }

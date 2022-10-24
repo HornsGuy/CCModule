@@ -20,9 +20,9 @@ namespace CCModuleClient
             base.OnGameNetworkBegin();
             this.AddRemoveMessageHandlers(GameNetwork.NetworkMessageHandlerRegisterer.RegisterMode.Add);
 
-            // Now that we listening for messages, ask the server to see if we are an admin
+            // Inform the server we are now listening for messages
             GameNetwork.BeginModuleEventAsClient();
-            GameNetwork.WriteMessage(new OpenAdminPanelMessage());
+            GameNetwork.WriteMessage(new ClientListeningMessage());
             GameNetwork.EndModuleEventAsClient();
         }
 
@@ -37,14 +37,26 @@ namespace CCModuleClient
         {
             GameNetwork.NetworkMessageHandlerRegisterer handlerRegisterer = new GameNetwork.NetworkMessageHandlerRegisterer(mode);
             handlerRegisterer.Register<AdminLoginMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<AdminLoginMessage>(this.HandleAdminLoginMessage));
+            handlerRegisterer.Register<TroopCapServerMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<TroopCapServerMessage>(this.HandleTroopCapServerMessage));
         }
 
         private void HandleAdminLoginMessage(AdminLoginMessage message)
         {
-            ChatMessageManager.ServerMessage("Logged In");
+            ChatMessageManager.ServerMessage("F8 for Admin Panel");
             CCModuleClientSubModule.playerIsAdmin = true;
         }
 
+        private void HandleTroopCapServerMessage(TroopCapServerMessage message)
+        {
+            if(AdminPanelClientData.Instance.UpdateTroopCapsIfDifferent(message.InfantryCap, message.RangedCap, message.CavalryCap))
+            {
+                TroopCapBehavior.UpdateTroopCaps(message.InfantryCap, message.RangedCap, message.CavalryCap);
+                ChatMessageManager.ServerMessage("Updated Troop Caps:");
+                ChatMessageManager.ServerMessage("Inf: "+ message.InfantryCap+"%");
+                ChatMessageManager.ServerMessage("Range: "+ message.RangedCap + "%");
+                ChatMessageManager.ServerMessage("Cav: "+ message.CavalryCap + "%");
+            }
+        }
 
         public override void OnAfterSave()
         {

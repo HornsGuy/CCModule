@@ -108,9 +108,11 @@
     <Compile Include="CCModuleServerOnlySubModule.cs" />
     <Compile Include="EquipmentOverrideMissionBehavior.cs" />
     <Compile Include="FromClient\APEndWarmupMessage.cs" />
-    <Compile Include="FromClient\OpenAdminPanelMessage.cs" />
+    <Compile Include="FromClient\APUpdateTroopCapMessage.cs" />
+    <Compile Include="FromClient\ClientListeningMessage.cs" />
     <Compile Include="FromServer\AdminLoginMessage.cs" />
     <Compile Include="FromServer\AvailableMapsMessage.cs" />
+    <Compile Include="FromServer\TroopCapServerMessage.cs" />
     <Compile Include="PlayerManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -4,10 +4,10 @@ using TaleWorlds.MountAndBlade.Network.Messages;
 namespace CCModuleNetworkMessages.FromClient
 {
     [DefineGameNetworkMessageTypeForMod(GameNetworkMessageSendType.FromClient)]
-    public sealed class OpenAdminPanelMessage : GameNetworkMessage
+    public sealed class ClientListeningMessage : GameNetworkMessage
     {
 
-        public OpenAdminPanelMessage()
+        public ClientListeningMessage()
         {
         }
 
@@ -22,6 +22,6 @@ namespace CCModuleNetworkMessages.FromClient
 
         protected override MultiplayerMessageFilter OnGetLogFilter() => MultiplayerMessageFilter.Mission;
 
-        protected override string OnGetLogFormat() => "Client is trying to open the admin panel, check if they are admin";
+        protected override string OnGetLogFormat() => "Message from the client to tell the server they are now listening for server events";
     }
 }

@@ -17,6 +17,47 @@ using System.Reflection;
 
 namespace CCModuleServerOnly
 {
+
+    public class AdminPanelData
+    {
+        static AdminPanelData _instance;
+        public static AdminPanelData Instance
+        {
+            get
+            {
+                if(_instance == null)
+                {
+                    _instance = new AdminPanelData();
+                }
+                return _instance;
+            }
+        }
+
+        AdminPanelData()
+        {
+            InfantryCap = 100;
+            RangedCap = 100;
+            CavalryCap = 100;
+        }
+
+        public bool UpdateTroopCapsIfDifferent(int infCap, int rangeCap, int cavCap)
+        {
+            if (InfantryCap != infCap || RangedCap != rangeCap || CavalryCap != cavCap)
+            {
+                InfantryCap = infCap;
+                RangedCap = rangeCap;
+                CavalryCap = cavCap;
+                return true;
+            }
+            return false;
+        }
+
+        public int InfantryCap { get; set; }
+        public int RangedCap { get; set; }
+        public int CavalryCap { get; set; }
+
+    }
+
     public struct MissionData
     {
         public string gameType;

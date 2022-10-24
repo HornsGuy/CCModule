@@ -23,15 +23,28 @@ namespace CCModuleClient
 
         private Dictionary<string, int> troopTypePercent = new Dictionary<string, int>();
 
-        public TroopCapBehavior(MissionGauntletClassLoadout loadoutMissionView)
+        public static void UpdateTroopCaps(int infCap, int rangeCap, int cavCap)
+        {
+            if(Mission.Current != null)
+            {
+                TroopCapBehavior troopCapBehavior = Mission.Current.GetMissionBehavior<TroopCapBehavior>();
+                if(troopCapBehavior != null)
+                {
+                    troopCapBehavior.UpdateTroopCapsInternal(infCap, rangeCap, cavCap);
+                    troopCapBehavior.RefreshLoadoutVM();
+                }
+            }
+        }
+
+        public TroopCapBehavior(MissionGauntletClassLoadout loadoutMissionView, int infCap, int rangeCap, int cavCap)
         {
             _loadoutMissionView = loadoutMissionView;
             OnClassLoadoutUIOpened += RefreshLoadoutVM;
 
-            // Defaults for testing
-            troopTypePercent.Add("Infantry", 0);
-            troopTypePercent.Add("Ranged", 100);
-            troopTypePercent.Add("Cavalry", 100);
+            // Defaults
+            troopTypePercent.Add("Infantry", infCap);
+            troopTypePercent.Add("Ranged", rangeCap);
+            troopTypePercent.Add("Cavalry", cavCap);
         }
 
         public override void OnMissionTick(float dt)
@@ -117,12 +130,18 @@ namespace CCModuleClient
             return toReturn;
         }
 
+        private void UpdateTroopCapsInternal(int infCap, int rangeCap, int cavCap)
+        {
+            troopTypePercent["Infantry"] = infCap;
+            troopTypePercent["Ranged"] = rangeCap;
+            troopTypePercent["Cavalry"] = cavCap;
+        }
+
         public void RefreshLoadoutVM()
         {
             if(_vm != null)
             {
                 ResetVM();
-
                 Dictionary<string, float> currentTroopBreakdown = GetCurrentTeamClassTypeBreakdown(PlayerWrapper.GetMyTeamTroopIndeces(),GetTroopIndexToTroopTypeDictionary(_vm.Classes.ToList()));
                 Dictionary<string, bool> classIsAvailable = GetTroopClassAvailabilityDictionary(currentTroopBreakdown, troopTypePercent);
                 foreach (var troopTypeGroup in _vm.Classes)

@@ -46,43 +46,11 @@ namespace CCModuleClient
             base.OnMultiplayerGameStart(game, starterObject);
         }
 
-        bool temp = true;
-
-        //protected override void OnApplicationTick(float dt)
-        //{
-        //    base.OnApplicationTick(dt);
-        //    if(classSelectionView != null && temp == true)
-        //    {
-
-        //        FieldInfo type = typeof(MissionGauntletClassLoadout).GetField("_dataSource", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        //        MultiplayerClassLoadoutVM vm = (MultiplayerClassLoadoutVM)type.GetValue(classSelectionView);
-        //        if (vm != null)
-        //        {
-        //            foreach (var las in vm.Classes)
-        //            {
-        //                if(las.IsValid)
-        //                {
-        //                    foreach (var sc in las.SubClasses)
-        //                    {
-        //                        if(!sc.IsSelected)
-        //                        {
-        //                            sc.IsEnabled = false;
-        //                        }
-        //                    }
-        //                }
-        //            }
-
-        //            ChatMessageManager.ServerMessage("Found loadout, yo");
-        //            temp = false;
-        //        }
-        //    }
-        //}
-
         public override void OnMissionBehaviorInitialize(Mission mission)
         {
             base.OnMissionBehaviorInitialize(mission);
             mission.AddMissionBehavior(new AdminPanelMissionView());
-            mission.AddMissionBehavior(new TroopCapBehavior(mission.GetMissionBehavior<MissionGauntletClassLoadout>()));
+            mission.AddMissionBehavior(new TroopCapBehavior(mission.GetMissionBehavior<MissionGauntletClassLoadout>(), AdminPanelClientData.Instance.InfantryCap, AdminPanelClientData.Instance.RangedCap, AdminPanelClientData.Instance.CavalryCap));
 
         }
 

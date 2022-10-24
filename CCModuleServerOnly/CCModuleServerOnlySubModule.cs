@@ -16,6 +16,11 @@ namespace CCModuleServerOnly
         protected override void OnSubModuleLoad()
         {
             base.OnSubModuleLoad();
+            Setup();
+        }
+
+        private void Setup()
+        {
             Debug.Print("Player Manager Loaded", 0, Debug.DebugColor.Magenta);
             PlayerManager.Instance.Setup();
         }
