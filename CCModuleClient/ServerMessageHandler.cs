@@ -48,13 +48,14 @@ namespace CCModuleClient
 
         private void HandleTroopCapServerMessage(TroopCapServerMessage message)
         {
-            if(AdminPanelClientData.Instance.UpdateTroopCapsIfDifferent(message.InfantryCap, message.RangedCap, message.CavalryCap))
+            if(AdminPanelClientData.Instance.UpdateTroopCapsIfDifferent(message.InfantryCap, message.RangedCap, message.CavalryCap, message.HorseArcherCap))
             {
-                TroopCapBehavior.UpdateTroopCaps(message.InfantryCap, message.RangedCap, message.CavalryCap);
+                TroopCapBehavior.UpdateTroopCaps(message.InfantryCap, message.RangedCap, message.CavalryCap, message.HorseArcherCap);
                 ChatMessageManager.ServerMessage("Updated Troop Caps:");
                 ChatMessageManager.ServerMessage("Inf: "+ message.InfantryCap+"%");
                 ChatMessageManager.ServerMessage("Range: "+ message.RangedCap + "%");
                 ChatMessageManager.ServerMessage("Cav: "+ message.CavalryCap + "%");
+                ChatMessageManager.ServerMessage("HA: "+ message.HorseArcherCap + "%");
             }
         }
 

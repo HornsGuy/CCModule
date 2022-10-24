@@ -38,15 +38,17 @@ namespace CCModuleServerOnly
             InfantryCap = 100;
             RangedCap = 100;
             CavalryCap = 100;
+            HorseArcherCap = 100;
         }
 
-        public bool UpdateTroopCapsIfDifferent(int infCap, int rangeCap, int cavCap)
+        public bool UpdateTroopCapsIfDifferent(int infCap, int rangeCap, int cavCap, int haCap)
         {
-            if (InfantryCap != infCap || RangedCap != rangeCap || CavalryCap != cavCap)
+            if (InfantryCap != infCap || RangedCap != rangeCap || CavalryCap != cavCap || HorseArcherCap != haCap)
             {
                 InfantryCap = infCap;
                 RangedCap = rangeCap;
                 CavalryCap = cavCap;
+                HorseArcherCap = haCap;
                 return true;
             }
             return false;
@@ -55,6 +57,7 @@ namespace CCModuleServerOnly
         public int InfantryCap { get; set; }
         public int RangedCap { get; set; }
         public int CavalryCap { get; set; }
+        public int HorseArcherCap { get; set; }
 
     }
 

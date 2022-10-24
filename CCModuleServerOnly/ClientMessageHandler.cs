@@ -57,14 +57,14 @@ namespace CCModuleServerOnly
         private void SyncAdminPanelSettingsWithClients(NetworkCommunicator peer)
         {
             GameNetwork.BeginModuleEventAsServer(peer);
-            GameNetwork.WriteMessage(new TroopCapServerMessage(AdminPanelData.Instance.InfantryCap, AdminPanelData.Instance.RangedCap, AdminPanelData.Instance.CavalryCap));
+            GameNetwork.WriteMessage(new TroopCapServerMessage(AdminPanelData.Instance.InfantryCap, AdminPanelData.Instance.RangedCap, AdminPanelData.Instance.CavalryCap, AdminPanelData.Instance.HorseArcherCap));
             GameNetwork.EndModuleEventAsServer();
         }
 
         private void SyncTroopCapWithClients()
         {
             GameNetwork.BeginBroadcastModuleEvent();
-            GameNetwork.WriteMessage(new TroopCapServerMessage(AdminPanelData.Instance.InfantryCap, AdminPanelData.Instance.RangedCap, AdminPanelData.Instance.CavalryCap));
+            GameNetwork.WriteMessage(new TroopCapServerMessage(AdminPanelData.Instance.InfantryCap, AdminPanelData.Instance.RangedCap, AdminPanelData.Instance.CavalryCap, AdminPanelData.Instance.HorseArcherCap));
             GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None);
         }
 
@@ -85,7 +85,7 @@ namespace CCModuleServerOnly
 
         private bool HandleUpdateTroopCapMessage(NetworkCommunicator peer, APUpdateTroopCapMessage message)
         {
-            if(CheckPeerIsAdminBanOtherwise(peer) && AdminPanelData.Instance.UpdateTroopCapsIfDifferent(message.InfantryCap, message.RangedCap, message.CavalryCap))
+            if(CheckPeerIsAdminBanOtherwise(peer) && AdminPanelData.Instance.UpdateTroopCapsIfDifferent(message.InfantryCap, message.RangedCap, message.CavalryCap, message.HorseArcherCap))
             {
                 SyncTroopCapWithClients();
             }

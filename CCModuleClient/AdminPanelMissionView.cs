@@ -101,6 +101,7 @@ namespace CCModuleClient
         private int _infClassCap = 78;
         private int _archerClassCap = 79;
         private int _cavClassCap = 80;
+        private int _haClassCap = 81;
 
         public bool cancelPressed = false;
 
@@ -164,6 +165,7 @@ namespace CCModuleClient
             this.InfantryCapPercentage = AdminPanelClientData.Instance.InfantryCap;
             this.ArcherCapPercentage = AdminPanelClientData.Instance.RangedCap;
             this.CavCapPercentage = AdminPanelClientData.Instance.CavalryCap;
+            this.HorseArcherCapPercentage = AdminPanelClientData.Instance.HorseArcherCap;
         }
 
         private void OnGameTypeChanged(SelectorVM<SelectorItemVM> obj)
@@ -213,10 +215,15 @@ namespace CCModuleClient
             SendTroopCapUpdateMessage();
         }
 
+        private void OnHACapChanged()
+        {
+            SendTroopCapUpdateMessage();
+        }
+
         private void SendTroopCapUpdateMessage()
         {
             GameNetwork.BeginModuleEventAsClient();
-            GameNetwork.WriteMessage(new APUpdateTroopCapMessage(InfantryCapPercentage, ArcherCapPercentage, CavCapPercentage));
+            GameNetwork.WriteMessage(new APUpdateTroopCapMessage(InfantryCapPercentage, ArcherCapPercentage, CavCapPercentage, HorseArcherCapPercentage));
             GameNetwork.EndModuleEventAsClient();
         }
 
@@ -409,6 +416,24 @@ namespace CCModuleClient
                     _cavClassCap = value;
                     base.OnPropertyChangedWithValue(value, "CavCapPercentage");
                     OnCavCapChanged();
+                }
+            }
+        }
+
+        [DataSourceProperty]
+        public int HorseArcherCapPercentage
+        {
+            get
+            {
+                return this._haClassCap;
+            }
+            set
+            {
+                if (value != this._haClassCap)
+                {
+                    _haClassCap = value;
+                    base.OnPropertyChangedWithValue(value, "HorseArcherCapPercentage");
+                    OnHACapChanged();
                 }
             }
         }

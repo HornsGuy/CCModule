@@ -10,12 +10,14 @@ namespace CCModuleNetworkMessages.FromServer
         public int InfantryCap { get; set; }
         public int RangedCap { get; set; }
         public int CavalryCap { get; set; }
+        public int HorseArcherCap { get; set; }
 
-        public TroopCapServerMessage(int infCap, int rangeCap, int cavCap)
+        public TroopCapServerMessage(int infCap, int rangeCap, int cavCap, int haCap)
         {
             InfantryCap = infCap;
             RangedCap = rangeCap;
             CavalryCap = cavCap;
+            HorseArcherCap = haCap;
         }
 
         public TroopCapServerMessage()
@@ -28,6 +30,7 @@ namespace CCModuleNetworkMessages.FromServer
             InfantryCap = GameNetworkMessage.ReadIntFromPacket(CompressionBasic.DebugIntNonCompressionInfo, ref bufferReadValid);
             RangedCap = GameNetworkMessage.ReadIntFromPacket(CompressionBasic.DebugIntNonCompressionInfo, ref bufferReadValid);
             CavalryCap = GameNetworkMessage.ReadIntFromPacket(CompressionBasic.DebugIntNonCompressionInfo, ref bufferReadValid);
+            HorseArcherCap = GameNetworkMessage.ReadIntFromPacket(CompressionBasic.DebugIntNonCompressionInfo, ref bufferReadValid);
 
             return bufferReadValid;
         }
@@ -37,6 +40,7 @@ namespace CCModuleNetworkMessages.FromServer
             GameNetworkMessage.WriteIntToPacket(InfantryCap, CompressionBasic.DebugIntNonCompressionInfo);
             GameNetworkMessage.WriteIntToPacket(RangedCap, CompressionBasic.DebugIntNonCompressionInfo);
             GameNetworkMessage.WriteIntToPacket(CavalryCap, CompressionBasic.DebugIntNonCompressionInfo);
+            GameNetworkMessage.WriteIntToPacket(HorseArcherCap, CompressionBasic.DebugIntNonCompressionInfo);
         }
 
         protected override MultiplayerMessageFilter OnGetLogFilter() => MultiplayerMessageFilter.Mission;

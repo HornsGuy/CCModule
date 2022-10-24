@@ -72,6 +72,7 @@ namespace CCModuleServerOnly
             troopTypePercent.Add(new TextObject("{=1Bm1Wk1v}Infantry").ToString(), AdminPanelData.Instance.InfantryCap);
             troopTypePercent.Add(new TextObject("{=rangedtroop}Ranged").ToString(), AdminPanelData.Instance.RangedCap);
             troopTypePercent.Add(new TextObject("{=YVGtcLHF}Cavalry").ToString(), AdminPanelData.Instance.CavalryCap);
+            troopTypePercent.Add(new TextObject("{=ugJfuabA}Horse Archer").ToString(), AdminPanelData.Instance.HorseArcherCap);
 
             Dictionary<int, string> typeDictionaryForPlayerTeam = playerPeer.Culture.ToString().ToLower() == MultiplayerOptions.OptionType.CultureTeam1.GetStrValue().ToLower() ? troopIndexToTypeTeam1 : troopIndexToTypeTeam2;
             Dictionary<string, float> currentTroopBreakdown = TroopCapLogic.GetCurrentTeamClassTypeBreakdown(GetPlayersTeamTroopIndeces(playerPeer), typeDictionaryForPlayerTeam, troopTypePercent.Keys.ToList());

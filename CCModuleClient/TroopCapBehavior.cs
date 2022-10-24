@@ -30,20 +30,20 @@ namespace CCModuleClient
 
         private Dictionary<string, int> troopTypePercent = new Dictionary<string, int>();
 
-        public static void UpdateTroopCaps(int infCap, int rangeCap, int cavCap)
+        public static void UpdateTroopCaps(int infCap, int rangeCap, int cavCap, int haCap)
         {
             if(Mission.Current != null)
             {
                 TroopCapBehavior troopCapBehavior = Mission.Current.GetMissionBehavior<TroopCapBehavior>();
                 if(troopCapBehavior != null)
                 {
-                    troopCapBehavior.UpdateTroopCapsInternal(infCap, rangeCap, cavCap);
+                    troopCapBehavior.UpdateTroopCapsInternal(infCap, rangeCap, cavCap, haCap);
                     troopCapBehavior.RefreshLoadoutVM();
                 }
             }
         }
 
-        public TroopCapBehavior(MissionGauntletClassLoadout loadoutMissionView, int infCap, int rangeCap, int cavCap)
+        public TroopCapBehavior(MissionGauntletClassLoadout loadoutMissionView, int infCap, int rangeCap, int cavCap, int haCap)
         {
             _loadoutMissionView = loadoutMissionView;
             OnClassLoadoutUIOpened += RefreshLoadoutVM;
@@ -52,6 +52,7 @@ namespace CCModuleClient
             troopTypePercent.Add(new TextObject("{=1Bm1Wk1v}Infantry").ToString(), infCap);
             troopTypePercent.Add(new TextObject("{=rangedtroop}Ranged").ToString(), rangeCap);
             troopTypePercent.Add(new TextObject("{=YVGtcLHF}Cavalry").ToString(), cavCap);
+            troopTypePercent.Add(new TextObject("{=ugJfuabA}Horse Archer").ToString(), haCap);
         }
 
         public void Setup()
@@ -117,11 +118,12 @@ namespace CCModuleClient
             return toReturn;
         }
 
-        private void UpdateTroopCapsInternal(int infCap, int rangeCap, int cavCap)
+        private void UpdateTroopCapsInternal(int infCap, int rangeCap, int cavCap, int haCap)
         {
             troopTypePercent[new TextObject("{=1Bm1Wk1v}Infantry").ToString()] = infCap;
             troopTypePercent[new TextObject("{=rangedtroop}Ranged").ToString()] = rangeCap;
             troopTypePercent[new TextObject("{=YVGtcLHF}Cavalry").ToString()] = cavCap;
+            troopTypePercent[new TextObject("{=ugJfuabA}Horse Archer").ToString()] = haCap;
         }
 
         public void RefreshLoadoutVM()
