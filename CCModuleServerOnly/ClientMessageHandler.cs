@@ -3,6 +3,7 @@ using CCModuleNetworkMessages.FromClient;
 using CCModuleNetworkMessages.FromServer;
 using NetworkMessages.FromClient;
 using NetworkMessages.FromServer;
+using System.Threading;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
@@ -92,21 +93,28 @@ namespace CCModuleServerOnly
             return true;
         }
 
+        private void SetSelectedTroopIndexThread(object peerObject)
+        {
+            Thread.Sleep(10);
+            NetworkCommunicator peer = (NetworkCommunicator)peerObject;
+            MissionPeer missionPeer = peer.GetComponent<MissionPeer>();
+            if(missionPeer != null)
+            {
+                missionPeer.SelectedTroopIndex = 0;
+                GameNetwork.BeginBroadcastModuleEvent();
+                GameNetwork.WriteMessage((GameNetworkMessage)new UpdateSelectedTroopIndex(peer, missionPeer.SelectedTroopIndex));
+                GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.ExcludeOtherTeamPlayers, peer);
+            }
+        }
+
         private bool HandleRequestTroopIndexChange(NetworkCommunicator peer, RequestTroopIndexChange message)
         {
             // Get what type of troop the peer is changing to and see if they are exceeding the troop cap
             MissionPeer missionPeer = peer.GetComponent<MissionPeer>();
             if(!TroopCapServerLogic.Instance.CheckIfPlayerTroopIndexIsUnderCap(missionPeer, message.SelectedTroopIndex))
             {
-                missionPeer.SelectedTroopIndex = 0;
-                GameNetwork.BeginBroadcastModuleEvent();
-                GameNetwork.WriteMessage((GameNetworkMessage)new UpdateSelectedTroopIndex(peer, 0));
-                GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.ExcludeOtherTeamPlayers, peer);
-                Debug.Print("Denied Selection Request", 0, Debug.DebugColor.Magenta);
-            }
-            else
-            {
-                Debug.Print("Accepted Selection Request", 0, Debug.DebugColor.Magenta);
+                Thread t = new Thread(new ParameterizedThreadStart(SetSelectedTroopIndexThread));
+                t.Start(peer);
             }
 
             return true;

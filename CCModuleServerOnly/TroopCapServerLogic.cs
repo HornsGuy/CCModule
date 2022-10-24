@@ -78,11 +78,11 @@ namespace CCModuleServerOnly
 
             Dictionary<string, bool> classIsAvailable = TroopCapLogic.GetTroopClassAvailabilityDictionary(currentTroopBreakdown, troopTypePercent);
 
-            Debug.Print(troopIndex.ToString(), 0,Debug.DebugColor.Magenta);
-            Debug.Print(typeDictionaryForPlayerTeam[troopIndex], 0,Debug.DebugColor.Magenta);
-            Debug.Print(classIsAvailable[typeDictionaryForPlayerTeam[troopIndex]].ToString(), 0,Debug.DebugColor.Magenta);
-            Debug.Print(currentTroopBreakdown[typeDictionaryForPlayerTeam[troopIndex]].ToString(), 0,Debug.DebugColor.Magenta);
-            Debug.Print(AdminPanelData.Instance.InfantryCap.ToString(), 0,Debug.DebugColor.Magenta);
+            //Debug.Print(troopIndex.ToString(), 0,Debug.DebugColor.Magenta);
+            //Debug.Print(typeDictionaryForPlayerTeam[troopIndex], 0,Debug.DebugColor.Magenta);
+            //Debug.Print(classIsAvailable[typeDictionaryForPlayerTeam[troopIndex]].ToString(), 0,Debug.DebugColor.Magenta);
+            //Debug.Print(currentTroopBreakdown[typeDictionaryForPlayerTeam[troopIndex]].ToString(), 0,Debug.DebugColor.Magenta);
+            //Debug.Print(AdminPanelData.Instance.InfantryCap.ToString(), 0,Debug.DebugColor.Magenta);
 
             return classIsAvailable[typeDictionaryForPlayerTeam[troopIndex]];
         }
