@@ -136,7 +136,7 @@ namespace CCModuleClient
                     int currentTypePercent = troopTypePercent[troopTypeGroup.Name];
                     if(currentTypePercent != 100)
                     {
-                        bool shouldBeLocked = !classIsAvailable[troopTypeGroup.Name];
+                        bool shouldBeLocked = false; //!classIsAvailable[troopTypeGroup.Name];
                         foreach (var troopClass in troopTypeGroup.SubClasses)
                         {
                             if(shouldBeLocked)

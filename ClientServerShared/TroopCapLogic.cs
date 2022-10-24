@@ -43,7 +43,18 @@ namespace ClientServerShared
 
             foreach (var keyVal in currentTroopBreakdown)
             {
-                toReturn.Add(keyVal.Key, keyVal.Value < troopCapPercent[keyVal.Key]);
+                bool isAvailable = keyVal.Value < troopCapPercent[keyVal.Key];
+
+                if(troopCapPercent[keyVal.Key] == 0)
+                {
+                    isAvailable = false;
+                }
+                else if(troopCapPercent[keyVal.Key] == 100)
+                {
+                    isAvailable = true;
+                }
+                
+                toReturn.Add(keyVal.Key, isAvailable);
             }
 
             return toReturn;

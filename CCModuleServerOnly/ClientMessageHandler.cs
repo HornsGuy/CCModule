@@ -96,13 +96,17 @@ namespace CCModuleServerOnly
         {
             // Get what type of troop the peer is changing to and see if they are exceeding the troop cap
             MissionPeer missionPeer = peer.GetComponent<MissionPeer>();
-            if(!TroopCapServerLogic.Instance.CheckIfPlayerTroopIndexIsUnderCap(missionPeer))
+            if(!TroopCapServerLogic.Instance.CheckIfPlayerTroopIndexIsUnderCap(missionPeer, message.SelectedTroopIndex))
             {
-                //missionPeer.SelectedTroopIndex = 0;
-                //GameNetwork.BeginBroadcastModuleEvent();
-                //GameNetwork.WriteMessage((GameNetworkMessage)new UpdateSelectedTroopIndex(peer, 0));
-                //GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.ExcludeOtherTeamPlayers, peer);
-                Debug.Print("Received Selection Request", 0, Debug.DebugColor.Magenta);
+                missionPeer.SelectedTroopIndex = 0;
+                GameNetwork.BeginBroadcastModuleEvent();
+                GameNetwork.WriteMessage((GameNetworkMessage)new UpdateSelectedTroopIndex(peer, 0));
+                GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.ExcludeOtherTeamPlayers, peer);
+                Debug.Print("Denied Selection Request", 0, Debug.DebugColor.Magenta);
+            }
+            else
+            {
+                Debug.Print("Accepted Selection Request", 0, Debug.DebugColor.Magenta);
             }
 
             return true;

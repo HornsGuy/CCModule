@@ -127,5 +127,61 @@ namespace ClientServerSharedTests
             }
             Assert.IsTrue(actual.Count == 0);
         }
+
+        [TestMethod]
+        public void GetTroopClassAvailabilityDictionary100Available()
+        {
+            Dictionary<string, float> currentBreakdown = new Dictionary<string, float>();
+            currentBreakdown.Add("Infantry", 100.0f);
+            currentBreakdown.Add("Ranged", 0.0f);
+            currentBreakdown.Add("Cavalry", 0.0f);
+
+            Dictionary<string, int> troopCapPercents = new Dictionary<string, int>();
+            troopCapPercents.Add("Infantry", 100);
+            troopCapPercents.Add("Ranged", 100);
+            troopCapPercents.Add("Cavalry", 100);
+
+            Dictionary<string, bool> expected = new Dictionary<string, bool>();
+            expected.Add("Infantry", true);
+            expected.Add("Ranged", true);
+            expected.Add("Cavalry", true);
+
+            Dictionary<string, bool> actual = TroopCapLogic.GetTroopClassAvailabilityDictionary(currentBreakdown, troopCapPercents);
+
+            foreach (var keyVal in expected)
+            {
+                Assert.AreEqual(keyVal.Value, actual[keyVal.Key]);
+                actual.Remove(keyVal.Key);
+            }
+            Assert.IsTrue(actual.Count == 0);
+        }
+
+        [TestMethod]
+        public void GetTroopClassAvailabilityDictionary0Available()
+        {
+            Dictionary<string, float> currentBreakdown = new Dictionary<string, float>();
+            currentBreakdown.Add("Infantry", 100.0f);
+            currentBreakdown.Add("Ranged", 0.0f);
+            currentBreakdown.Add("Cavalry", 0.0f);
+
+            Dictionary<string, int> troopCapPercents = new Dictionary<string, int>();
+            troopCapPercents.Add("Infantry", 0);
+            troopCapPercents.Add("Ranged", 0);
+            troopCapPercents.Add("Cavalry", 0);
+
+            Dictionary<string, bool> expected = new Dictionary<string, bool>();
+            expected.Add("Infantry", false);
+            expected.Add("Ranged", false);
+            expected.Add("Cavalry", false);
+
+            Dictionary<string, bool> actual = TroopCapLogic.GetTroopClassAvailabilityDictionary(currentBreakdown, troopCapPercents);
+
+            foreach (var keyVal in expected)
+            {
+                Assert.AreEqual(keyVal.Value, actual[keyVal.Key]);
+                actual.Remove(keyVal.Key);
+            }
+            Assert.IsTrue(actual.Count == 0);
+        }
     }
 }
