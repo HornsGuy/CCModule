@@ -1,0 +1,219 @@
+<Prefab>
+  <Constants>
+  <Constant Name="TypingArea.Height" Value="40" />
+    <Constant Name="TypingArea.Width" Value="350" />
+    </Constants>
+
+    <Window>
+        <Widget HorizontalAlignment="Center" HeightSizePolicy="StretchToParent" SuggestedWidth="700" MarginBottom="50" MarginTop="50">
+            <Children>
+                <Standard.Window Parameter.Title="Admin Panel">
+                    <Children>
+
+					<ListPanel MarginTop="20" MarginRight="50" Id="ListPanel" SuggestedWidth="500" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="VerticalBottomToTop"  HorizontalAlignment="Center" >
+						<Children>
+							<!-- Mission -->
+							<TextWidget WidthSizePolicy="Fixed" SuggestedWidth="150" HeightSizePolicy="Fixed" PositionXOffset="-20" SuggestedHeight="35" HorizontalAlignment="Left" Brush="AdminPanel.Header" Text="Mission" IsEnabled="true"/>
+							
+							<!-- Mission Drop Downs -->
+							<ListPanel   Id="ListPanel" SuggestedWidth="500" SuggestedHeight="200" StackLayout.LayoutMethod="VerticalBottomToTop"  HorizontalAlignment="Center" >
+								<Children>
+									<!-- Game Type -->
+									<ListPanel Id="ListPanel" WidthSizePolicy="Fixed" SuggestedWidth="500" MarginRight="200" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="HorizontalLeftToRight"  >
+									  <Children>
+										<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="Game Type" IsEnabled="true"/>
+										<Standard.DropdownWithHorizontalControl VerticalAlignment="Center" WidthSizePolicy="Fixed" SuggestedWidth="500" Id="SelectionOption" Parameter.SelectorDataSource="{GameTypes}" Parameter.ShowNextAndPrevious="false" GamepadNavigationIndex="0" />
+									  </Children>
+									</ListPanel>
+
+									<!-- Map -->
+									<ListPanel Id="ListPanel" VerticalAlignment="Center"  WidthSizePolicy="Fixed" SuggestedWidth="500" MarginRight="200" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="HorizontalLeftToRight"  >
+									  <Children>
+										<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="Map" IsEnabled="true"/>
+										<Standard.DropdownWithHorizontalControl VerticalAlignment="Center" WidthSizePolicy="Fixed" SuggestedWidth="500" Id="SelectionOption" Parameter.SelectorDataSource="{Maps}" Parameter.ShowNextAndPrevious="false" GamepadNavigationIndex="0" />
+									  </Children>
+									</ListPanel>
+									
+									<!-- Faction 1 -->
+									<ListPanel Id="ListPanel"  WidthSizePolicy="Fixed" SuggestedWidth="500" MarginRight="200" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="HorizontalLeftToRight"  >
+									  <Children>
+										<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="Faction Team 1" IsEnabled="true"/>
+										<Standard.DropdownWithHorizontalControl VerticalAlignment="Center" WidthSizePolicy="Fixed" SuggestedWidth="500" Id="SelectionOption" Parameter.SelectorDataSource="{Faction1}" Parameter.ShowNextAndPrevious="false" GamepadNavigationIndex="0" />
+									  </Children>
+									</ListPanel>
+									
+									<!-- Faction 2 -->
+									<ListPanel Id="ListPanel"  WidthSizePolicy="Fixed" SuggestedWidth="500" MarginRight="200" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="HorizontalLeftToRight"  >
+									  <Children>
+										<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="Faction Team 2" IsEnabled="true"/>
+										<Standard.DropdownWithHorizontalControl VerticalAlignment="Center" WidthSizePolicy="Fixed" SuggestedWidth="500" Id="SelectionOption" Parameter.SelectorDataSource="{Faction2}" Parameter.ShowNextAndPrevious="false" GamepadNavigationIndex="0" />
+									  </Children>
+									</ListPanel>
+								
+								</Children>
+							</ListPanel>
+							
+							<!-- Mission Number Inputs -->
+							<ListPanel  MarginTop="5" Id="ListPanel" SuggestedWidth="500" SuggestedHeight="110" StackLayout.LayoutMethod="VerticalBottomToTop"  HorizontalAlignment="Center" >
+								<Children>
+								
+								<!-- Map Time -->
+							<ListPanel Id="ListPanel"  WidthSizePolicy="Fixed" SuggestedWidth="500" MarginRight="200" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="HorizontalLeftToRight"  >
+							  <Children>
+								<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="Map Time" IsEnabled="true"/>
+
+								<IntegerInputTextWidget VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="30" HorizontalAlignment="Right" Brush="AdminPanel.TextInput.Text" IntText="@MapTime" MaxInt="60" MinInt="1" EnableClamp="true" ClipContents="false" IsDisabled="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" MaxLength="4">
+								  <Children>
+									<BrushWidget  WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="AdminPanel.TextInput.Slider" ClipContents="false"/>
+								  </Children>
+								</IntegerInputTextWidget>
+							  </Children>
+							</ListPanel>
+							
+							<!-- Round Time -->
+							<ListPanel Id="ListPanel"  WidthSizePolicy="Fixed" SuggestedWidth="500" MarginRight="200" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="HorizontalLeftToRight"  >
+							  <Children>
+								<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="Round Time" IsEnabled="true"/>
+
+								<IntegerInputTextWidget VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="30" HorizontalAlignment="Right"  Brush="AdminPanel.TextInput.Text" IntText="@RoundTime" MaxInt="16" MinInt="1" EnableClamp="true" ClipContents="false" IsDisabled="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" MaxLength="4">
+								  <Children>
+									<BrushWidget  WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="AdminPanel.TextInput.Slider" ClipContents="false"/>
+								  </Children>
+								</IntegerInputTextWidget>
+							  </Children>
+							</ListPanel>
+							
+							<!-- Warmup Time -->
+							<ListPanel Id="ListPanel"  WidthSizePolicy="Fixed" SuggestedWidth="500" MarginRight="200" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="HorizontalLeftToRight"  >
+							  <Children>
+								<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="Warmup Time" IsEnabled="true"/>
+
+								<IntegerInputTextWidget VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="30" HorizontalAlignment="Right"  Brush="AdminPanel.TextInput.Text" IntText="@WarmupTime" MaxInt="60" MinInt="1" EnableClamp="true" ClipContents="false" IsDisabled="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" MaxLength="4">
+								  <Children>
+									<BrushWidget  WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="AdminPanel.TextInput.Slider" ClipContents="false"/>
+								  </Children>
+								</IntegerInputTextWidget>
+								
+								<!-- End Warmup -->
+								<ButtonWidget DoNotPassEventsToChildren="true" UpdateChildrenStates="true" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="125"  HorizontalAlignment="Center" Brush="WideButton.Flat" Command.Click="ExecuteEndWarmup" IsEnabled="true">
+								  <Children>
+									<TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" VerticalAlignment="Center" Brush="MPLobby.PlayButton.Text" Brush.FontSize="18" Brush.TextVerticalAlignment="Center" Text="End Warmup" IsEnabled="true" />
+								  </Children>
+								</ButtonWidget>
+							  </Children>
+							</ListPanel>
+								
+								</Children>
+							</ListPanel>
+							
+							
+							
+							<!-- Troop Cap -->
+							<TextWidget  WidthSizePolicy="Fixed" SuggestedWidth="150" HeightSizePolicy="Fixed" SuggestedHeight="65" Brush="AdminPanel.Header" Text="Troop Caps" IsEnabled="true"/>
+							
+							<!-- Troop Cap Number Inputs -->
+							<ListPanel MarginTop="-10" Id="ListPanel" SuggestedWidth="500" SuggestedHeight="110" StackLayout.LayoutMethod="VerticalBottomToTop"  HorizontalAlignment="Center" >
+								<Children>
+									<!-- Inf Cap -->
+									<ListPanel Id="ListPanel"  WidthSizePolicy="Fixed" SuggestedWidth="500"  HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="HorizontalLeftToRight"  >
+									  <Children>
+										<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="Inf Cap %" IsEnabled="true"/>
+
+										<IntegerInputTextWidget VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="30" HorizontalAlignment="Right"  Brush="AdminPanel.TextInput.Text" IntText="@InfantryCapPercentage" MaxInt="100" MinInt="0" EnableClamp="true" ClipContents="false" IsDisabled="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" MaxLength="4">
+										  <Children>
+											<BrushWidget  WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="AdminPanel.TextInput.Slider" ClipContents="false"/>
+										  </Children>
+										</IntegerInputTextWidget>
+									  </Children>
+									</ListPanel>
+									
+									<!-- Archer Cap -->
+									<ListPanel Id="ListPanel"  WidthSizePolicy="Fixed" SuggestedWidth="500" MarginRight="200" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="HorizontalLeftToRight"  >
+									  <Children>
+										<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="Archer Cap %" IsEnabled="true"/>
+
+										<IntegerInputTextWidget VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="30" HorizontalAlignment="Right"  Brush="AdminPanel.TextInput.Text" IntText="@ArcherCapPercentage" MaxInt="100" MinInt="0" EnableClamp="true" ClipContents="false" IsDisabled="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" MaxLength="4">
+										  <Children>
+											<BrushWidget  WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="AdminPanel.TextInput.Slider" ClipContents="false"/>
+										  </Children>
+										</IntegerInputTextWidget>
+									  </Children>
+									</ListPanel>
+									
+									<!-- Cav Cap -->
+									<ListPanel Id="ListPanel"  WidthSizePolicy="Fixed" SuggestedWidth="500" MarginRight="200" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="HorizontalLeftToRight"  >
+									  <Children>
+										<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="Cav Cap %" IsEnabled="true"/>
+
+										<IntegerInputTextWidget VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="30" HorizontalAlignment="Right"  Brush="AdminPanel.TextInput.Text" IntText="@CavCapPercentage" MaxInt="100" MinInt="0" EnableClamp="true" ClipContents="false" IsDisabled="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" MaxLength="4">
+										  <Children>
+											<BrushWidget  WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="AdminPanel.TextInput.Slider" ClipContents="false"/>
+										  </Children>
+										</IntegerInputTextWidget>
+									  </Children>
+									</ListPanel>
+									
+								</Children>
+							</ListPanel>
+							
+							<!-- Player Management -->
+							<TextWidget MarginTop="5" VerticalAlignment="Center" WidthSizePolicy="Fixed" PositionXOffset="-20" SuggestedWidth="150" HeightSizePolicy="Fixed" SuggestedHeight="35" HorizontalAlignment="Left" Brush="AdminPanel.Header" Text="Players" IsEnabled="true"/>
+							<!-- Player Buttons Row 1 -->
+							<ListPanel Id="ListPanel"  WidthSizePolicy="Fixed" SuggestedWidth="500" MarginRight="200" HeightSizePolicy="Fixed" SuggestedHeight="45" StackLayout.LayoutMethod="HorizontalLeftToRight"  >
+							  <Children>
+
+								<!-- Kick -->
+								<ButtonWidget DoNotPassEventsToChildren="true" UpdateChildrenStates="true" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="150"  HorizontalAlignment="Center" Brush="WideButton.Flat" Command.Click="ExecuteDownloadMap" IsEnabled="true">
+								  <Children>
+									<TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" VerticalAlignment="Center" Brush="MPLobby.PlayButton.Text" Brush.FontSize="25" Brush.TextVerticalAlignment="Center" Text="Kick" IsEnabled="true" />
+								  </Children>
+								</ButtonWidget>
+								
+								<!-- Ban -->
+								<ButtonWidget  DoNotPassEventsToChildren="true" UpdateChildrenStates="true" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="150"  HorizontalAlignment="Center" Brush="WideButton.Flat" Command.Click="ExecuteDownloadMap" IsEnabled="true">
+								  <Children>
+									<TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" VerticalAlignment="Center" Brush="MPLobby.PlayButton.Text" Brush.FontSize="25" Brush.TextVerticalAlignment="Center" Text="Ban" IsEnabled="true" />
+								  </Children>
+								</ButtonWidget>  
+								
+								<!-- Slay -->
+								<ButtonWidget  DoNotPassEventsToChildren="true" UpdateChildrenStates="true" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="150" HorizontalAlignment="Center" Brush="WideButton.Flat" Command.Click="ExecuteDownloadMap" IsEnabled="true">
+								  <Children>
+									<TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" VerticalAlignment="Center" Brush="MPLobby.PlayButton.Text" Brush.FontSize="25" Brush.TextVerticalAlignment="Center" Text="Slay" IsEnabled="true" />
+								  </Children>
+								</ButtonWidget>  
+								
+							  </Children>
+							</ListPanel>
+							<!-- Player Buttons Row 2 -->
+							<ListPanel Id="ListPanel"  WidthSizePolicy="Fixed" SuggestedWidth="500" MarginRight="200" HeightSizePolicy="Fixed" SuggestedHeight="45" StackLayout.LayoutMethod="HorizontalLeftToRight"  >
+							  <Children>
+
+								<!-- Teleport To -->
+								<ButtonWidget DoNotPassEventsToChildren="true" UpdateChildrenStates="true" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="150"  HorizontalAlignment="Center" Brush="WideButton.Flat" Command.Click="ExecuteDownloadMap" IsEnabled="true">
+								  <Children>
+									<TextWidget  WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" VerticalAlignment="Center" Brush="MPLobby.PlayButton.Text" Brush.FontSize="25" Brush.TextVerticalAlignment="Center" Text="Teleport To" IsEnabled="true" />
+								  </Children>
+								</ButtonWidget>
+								
+								<!-- Teleport to Me -->
+								<ButtonWidget  DoNotPassEventsToChildren="true" UpdateChildrenStates="true" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="200"  HorizontalAlignment="Center" Brush="WideButton.Flat" Command.Click="ExecuteDownloadMap" IsEnabled="true">
+								  <Children>
+									<TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" VerticalAlignment="Center" Brush="MPLobby.PlayButton.Text" Brush.FontSize="25" Brush.TextVerticalAlignment="Center" Text="Teleport to Me" IsEnabled="true" />
+								  </Children>
+								</ButtonWidget>  
+								
+								
+							  </Children>
+							</ListPanel>
+							
+						</Children>
+					</ListPanel>
+
+                    </Children>
+                </Standard.Window>
+                <Standard.DialogCloseButtons Parameter.CancelButtonAction="ExecuteCancel" Parameter.CancelButtonText="Cancel" Parameter.DoneButtonAction="ExecuteDone" Parameter.DoneButtonText="Start Mission" />
+            </Children>
+        </Widget>
+    </Window>
+</Prefab>
