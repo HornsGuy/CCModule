@@ -119,7 +119,7 @@
 									  <Children>
 										<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="Inf Cap %" IsEnabled="true"/>
 
-										<IntegerInputTextWidget VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="30" HorizontalAlignment="Right"  Brush="AdminPanel.TextInput.Text" IntText="@InfantryCapPercentage" MaxInt="100" MinInt="0" EnableClamp="true" ClipContents="false" IsDisabled="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" MaxLength="4">
+										<IntegerInputTextWidget VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="30" HorizontalAlignment="Right" Command.FocusLost="InfantryCapFocusLost" Brush="AdminPanel.TextInput.Text" IntText="@InfantryCapPercentage" MaxInt="100" MinInt="0" EnableClamp="true" ClipContents="false" IsDisabled="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" MaxLength="4">
 										  <Children>
 											<BrushWidget  WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="AdminPanel.TextInput.Slider" ClipContents="false"/>
 										  </Children>
@@ -132,7 +132,7 @@
 									  <Children>
 										<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="Archer Cap %" IsEnabled="true"/>
 
-										<IntegerInputTextWidget VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="30" HorizontalAlignment="Right"  Brush="AdminPanel.TextInput.Text" IntText="@ArcherCapPercentage" MaxInt="100" MinInt="0" EnableClamp="true" ClipContents="false" IsDisabled="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" MaxLength="4">
+										<IntegerInputTextWidget VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="30" HorizontalAlignment="Right" Command.FocusLost="RangeCapFocusLost" Brush="AdminPanel.TextInput.Text" IntText="@ArcherCapPercentage" MaxInt="100" MinInt="0" EnableClamp="true" ClipContents="false" IsDisabled="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" MaxLength="4">
 										  <Children>
 											<BrushWidget  WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="AdminPanel.TextInput.Slider" ClipContents="false"/>
 										  </Children>
@@ -145,7 +145,20 @@
 									  <Children>
 										<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="Cav Cap %" IsEnabled="true"/>
 
-										<IntegerInputTextWidget VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="30" HorizontalAlignment="Right"  Brush="AdminPanel.TextInput.Text" IntText="@CavCapPercentage" MaxInt="100" MinInt="0" EnableClamp="true" ClipContents="false" IsDisabled="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" MaxLength="4">
+										<IntegerInputTextWidget VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="30" HorizontalAlignment="Right" Command.FocusLost="CavCapFocusLost" Brush="AdminPanel.TextInput.Text" IntText="@CavCapPercentage" MaxInt="100" MinInt="0" EnableClamp="true" ClipContents="false" IsDisabled="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" MaxLength="4">
+										  <Children>
+											<BrushWidget  WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="AdminPanel.TextInput.Slider" ClipContents="false"/>
+										  </Children>
+										</IntegerInputTextWidget>
+									  </Children>
+									</ListPanel>
+									
+									<!-- Horse Archer Cap -->
+									<ListPanel Id="ListPanel"  WidthSizePolicy="Fixed" SuggestedWidth="500" MarginRight="200" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="HorizontalLeftToRight"  >
+									  <Children>
+										<TextWidget VerticalAlignment="Center" MarginRight="50" WidthSizePolicy="Fixed" SuggestedWidth="150"  Brush="SPOptions.OptionName.Text" Text="HA Cap %" IsEnabled="true"/>
+
+										<IntegerInputTextWidget VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="30" HorizontalAlignment="Right" Command.FocusLost="HorseArcherCapFocusLost" Brush="AdminPanel.TextInput.Text" IntText="@HorseArcherCapPercentage" MaxInt="100" MinInt="0" EnableClamp="true" ClipContents="false" IsDisabled="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" MaxLength="4">
 										  <Children>
 											<BrushWidget  WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="AdminPanel.TextInput.Slider" ClipContents="false"/>
 										  </Children>

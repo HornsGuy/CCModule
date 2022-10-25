@@ -162,10 +162,10 @@ namespace CCModuleClient
             this.Faction1 = new SelectorVM<SelectorItemVM>(factionStrings, 0, new Action<SelectorVM<SelectorItemVM>>(this.OnFaction1Changed));
             this.Faction2 = new SelectorVM<SelectorItemVM>(factionStrings, 0, new Action<SelectorVM<SelectorItemVM>>(this.OnFaction2Changed));
 
-            this.InfantryCapPercentage = AdminPanelClientData.Instance.InfantryCap;
-            this.ArcherCapPercentage = AdminPanelClientData.Instance.RangedCap;
-            this.CavCapPercentage = AdminPanelClientData.Instance.CavalryCap;
-            this.HorseArcherCapPercentage = AdminPanelClientData.Instance.HorseArcherCap;
+            _infClassCap = AdminPanelClientData.Instance.InfantryCap;
+            _archerClassCap = AdminPanelClientData.Instance.RangedCap;
+            _cavClassCap = AdminPanelClientData.Instance.CavalryCap;
+            _haClassCap = AdminPanelClientData.Instance.HorseArcherCap;
         }
 
         private void OnGameTypeChanged(SelectorVM<SelectorItemVM> obj)
@@ -200,22 +200,22 @@ namespace CCModuleClient
             // Tell server to change warmup time
         }
 
-        private void OnInfCapChanged()
+        private async void InfantryCapFocusLost()
         {
             SendTroopCapUpdateMessage();
         }
 
-        private void OnArcherCapChanged()
+        private async void RangeCapFocusLost()
         {
             SendTroopCapUpdateMessage();
         }
         
-        private void OnCavCapChanged()
+        private async void CavCapFocusLost()
         {
             SendTroopCapUpdateMessage();
         }
 
-        private void OnHACapChanged()
+        private async void HorseArcherCapFocusLost()
         {
             SendTroopCapUpdateMessage();
         }
@@ -379,7 +379,6 @@ namespace CCModuleClient
                 {
                     _infClassCap = value;
                     base.OnPropertyChangedWithValue(value, "InfantryCapPercentage");
-                    OnInfCapChanged();
                 }
             }
         }
@@ -397,7 +396,6 @@ namespace CCModuleClient
                 {
                     _archerClassCap = value;
                     base.OnPropertyChangedWithValue(value, "ArcherCapPercentage");
-                    OnArcherCapChanged();
                 }
             }
         }
@@ -415,7 +413,6 @@ namespace CCModuleClient
                 {
                     _cavClassCap = value;
                     base.OnPropertyChangedWithValue(value, "CavCapPercentage");
-                    OnCavCapChanged();
                 }
             }
         }
@@ -433,7 +430,6 @@ namespace CCModuleClient
                 {
                     _haClassCap = value;
                     base.OnPropertyChangedWithValue(value, "HorseArcherCapPercentage");
-                    OnHACapChanged();
                 }
             }
         }

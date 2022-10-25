@@ -41,7 +41,7 @@ namespace CCModuleClient
 
         public static void ServerMessage(string message)
         {
-            AddMessage(message, 217, 85, 41);
+            AddMessage(message, 50, 200, 50);
         }
     }
 }
