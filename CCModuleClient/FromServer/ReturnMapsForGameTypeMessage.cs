@@ -5,27 +5,29 @@ using TaleWorlds.MountAndBlade.Network.Messages;
 namespace CCModuleNetworkMessages.FromServer
 {
     [DefineGameNetworkMessageTypeForMod(GameNetworkMessageSendType.FromServer)]
-    public sealed class AvailableMapsMessage : GameNetworkMessage
+    public sealed class ReturnMapsForGameTypeMessage : GameNetworkMessage
     {
+        public List<string> AvailableMaps { get; set; }
 
-        public List<string> maps { get; private set; }
-
-        public AvailableMapsMessage(List<string> maps)
+        public ReturnMapsForGameTypeMessage(List<string> maps)
         {
-            this.maps = maps;
+            AvailableMaps = maps;
         }
 
-        public AvailableMapsMessage()
+        public ReturnMapsForGameTypeMessage()
         {
+
         }
 
         protected override bool OnRead()
         {
             bool bufferReadValid = true;
+
+            // Maps
             string temp = GameNetworkMessage.ReadStringFromPacket(ref bufferReadValid);
-            if(temp.Contains(" "))
+            if (temp.Contains(" "))
             {
-                maps = new List<string>(temp.Split(' '));
+                AvailableMaps = new List<string>(temp.Split(' '));
             }
 
             return bufferReadValid;
@@ -33,12 +35,14 @@ namespace CCModuleNetworkMessages.FromServer
 
         protected override void OnWrite()
         {
-            string temp = string.Join(" ", maps);
+            // Maps
+            string temp = string.Join(" ", AvailableMaps);
             GameNetworkMessage.WriteStringToPacket(temp);
+
         }
 
         protected override MultiplayerMessageFilter OnGetLogFilter() => MultiplayerMessageFilter.Mission;
 
-        protected override string OnGetLogFormat() => "Contains list of maps";
+        protected override string OnGetLogFormat() => "Give client maps for selected game type";
     }
 }

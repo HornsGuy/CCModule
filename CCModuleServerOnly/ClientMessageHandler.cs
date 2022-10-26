@@ -36,6 +36,8 @@ namespace CCModuleServerOnly
             handlerRegisterer.Register<ClientListeningMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<ClientListeningMessage>(this.HandleClientListeningMessage));
             handlerRegisterer.Register<APUpdateTroopCapMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<APUpdateTroopCapMessage>(this.HandleUpdateTroopCapMessage));
             handlerRegisterer.Register<RequestTroopIndexChange>(new GameNetworkMessage.ClientMessageHandlerDelegate<RequestTroopIndexChange>(this.HandleRequestTroopIndexChange));
+            handlerRegisterer.Register<OpenAdminPanelMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<OpenAdminPanelMessage>(this.HandleOpenAdminPanelMessage));
+            handlerRegisterer.Register<RequestMapsForGameType>(new GameNetworkMessage.ClientMessageHandlerDelegate<RequestMapsForGameType>(this.HandleRequestMapsForGameType));
         }
 
         private bool HandleEndWarmupMessage(NetworkCommunicator peer, APEndWarmupMessage message)
@@ -57,7 +59,7 @@ namespace CCModuleServerOnly
         private void SyncAdminPanelSettingsWithClients(NetworkCommunicator peer)
         {
             GameNetwork.BeginModuleEventAsServer(peer);
-            GameNetwork.WriteMessage(new TroopCapServerMessage(AdminPanelData.Instance.InfantryCap, AdminPanelData.Instance.RangedCap, AdminPanelData.Instance.CavalryCap, AdminPanelData.Instance.HorseArcherCap,false));
+            GameNetwork.WriteMessage(AdminPanelData.Instance.CreateSyncMessage(false));
             GameNetwork.EndModuleEventAsServer();
         }
 
@@ -111,11 +113,28 @@ namespace CCModuleServerOnly
         {
             // Get what type of troop the peer is changing to and see if they are exceeding the troop cap
             MissionPeer missionPeer = peer.GetComponent<MissionPeer>();
-            if(!TroopCapServerLogic.Instance.CheckIfPlayerTroopIndexIsUnderCap(missionPeer, message.SelectedTroopIndex))
+            if (!TroopCapServerLogic.Instance.CheckIfPlayerTroopIndexIsUnderCap(missionPeer, message.SelectedTroopIndex))
             {
                 Thread t = new Thread(new ParameterizedThreadStart(SetSelectedTroopIndexThread));
                 t.Start(peer);
             }
+            return true;
+        }
+        
+        private bool HandleRequestMapsForGameType(NetworkCommunicator peer, RequestMapsForGameType message)
+        {
+            GameNetwork.BeginModuleEventAsServer(peer);
+            GameNetwork.WriteMessage(new ReturnMapsForGameTypeMessage(AdminPanel.Instance.GetMapsForGameType(message.GameType)));
+            GameNetwork.EndModuleEventAsServer();
+            return true;
+        }
+        
+        private bool HandleOpenAdminPanelMessage(NetworkCommunicator peer, OpenAdminPanelMessage message)
+        {
+            // Turn around and send the player the admin panel data
+            GameNetwork.BeginModuleEventAsServer(peer);
+            GameNetwork.WriteMessage(AdminPanelData.Instance.CreateSyncMessage(false));
+            GameNetwork.EndModuleEventAsServer();
 
             return true;
         }

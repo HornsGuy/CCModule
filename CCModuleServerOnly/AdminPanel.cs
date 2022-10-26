@@ -14,6 +14,7 @@ using TaleWorlds.MountAndBlade.Network.Messages;
 using TaleWorlds.ObjectSystem;
 using TaleWorlds.MountAndBlade.Diamond;
 using System.Reflection;
+using CCModuleNetworkMessages.FromServer;
 
 namespace CCModuleServerOnly
 {
@@ -58,6 +59,14 @@ namespace CCModuleServerOnly
         public int RangedCap { get; set; }
         public int CavalryCap { get; set; }
         public int HorseArcherCap { get; set; }
+
+        public SyncAdminPanelMessage CreateSyncMessage(bool printUpdatedValues)
+        {
+            SyncAdminPanelMessage syncMessage = new SyncAdminPanelMessage();
+            syncMessage.SetTroopCaps(InfantryCap, RangedCap, CavalryCap, HorseArcherCap);
+            syncMessage.AvailableMaps = AdminPanel.Instance.GetAllAvailableMaps();
+            return syncMessage;
+        }
 
     }
 
@@ -759,7 +768,6 @@ namespace CCModuleServerOnly
                 newEquipment[EquipmentIndex.Weapon1] = oldAgent.SpawnEquipment[EquipmentIndex.Weapon1];
                 newEquipment[EquipmentIndex.Weapon2] = oldAgent.SpawnEquipment[EquipmentIndex.Weapon2];
                 newEquipment[EquipmentIndex.Weapon3] = oldAgent.SpawnEquipment[EquipmentIndex.Weapon3];
-                newEquipment[EquipmentIndex.Weapon4] = oldAgent.SpawnEquipment[EquipmentIndex.Weapon4];
 
 
                 // Override the equipment now that cosmetics are placed

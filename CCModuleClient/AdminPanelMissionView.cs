@@ -25,6 +25,18 @@ namespace CCModuleClient
             this.ViewOrderPriority = 10;
         }
 
+        public static void UpdateAvailableMaps(List<string> maps)
+        {
+            if (Mission.Current != null)
+            {
+                AdminPanelMissionView adminPanelMissionView = Mission.Current.GetMissionBehavior<AdminPanelMissionView>();
+                if (adminPanelMissionView != null && adminPanelMissionView._dataSource != null)
+                {
+                    adminPanelMissionView._dataSource.UpdateAvailableMaps(maps);
+                }
+            }
+        }
+
         public override void OnMissionScreenFinalize()
         {
             base.OnMissionScreenFinalize();
@@ -67,6 +79,11 @@ namespace CCModuleClient
 
         private void OpenAdminPanelUI()
         {
+            // Message server to get fresh data
+            GameNetwork.BeginModuleEventAsClient();
+            GameNetwork.WriteMessage(new OpenAdminPanelMessage());
+            GameNetwork.EndModuleEventAsClient();
+            
             _dataSource = new AdminPanelVM();
             _layer = new GauntletLayer(this.ViewOrderPriority);
             
@@ -105,39 +122,9 @@ namespace CCModuleClient
 
         public bool cancelPressed = false;
 
-        private List<string> gameModes = new List<string>() 
-        {
-            "Siege",
-            "Battle",
-            "Team Deathmatch",
-            "Duel"
-        };
+        private List<string> gameModes = new List<string>();
 
-        private List<string> maps = new List<string>()
-        {
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001",
-            "mp_battle_map_001"
-        };
+        private List<string> maps = new List<string>();
 
         private List<string> factionStrings = new List<string>()
         {
@@ -149,32 +136,61 @@ namespace CCModuleClient
             "Vlandia"
         };
 
-
         public AdminPanelVM()
         {
-            // Set current gamemode
-            this.GameTypes = new SelectorVM<SelectorItemVM>(gameModes, 0, new Action<SelectorVM<SelectorItemVM>>(this.OnGameTypeChanged));
+            // Game Mode
+            gameModes = MultiplayerOptions.Instance.GetMultiplayerOptionsList(MultiplayerOptions.OptionType.GameType);
             
-            // Ask server for maps
+            string tempGameType = "";
+            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.GameType).GetValue(out tempGameType);
+            int selectedIndex = gameModes.IndexOf(tempGameType);
+            
+            this.GameTypes = new SelectorVM<SelectorItemVM>(gameModes, selectedIndex, new Action<SelectorVM<SelectorItemVM>>(this.OnGameTypeChanged));
+
+            // Maps
+            maps = AdminPanelClientData.Instance.AvailableMaps;
             this.Maps = new SelectorVM<SelectorItemVM>(maps, 0, new Action<SelectorVM<SelectorItemVM>>(this.OnMapChanged));
 
-            // Get current factions for index
+            // Factions
+            factionStrings = MultiplayerOptions.Instance.GetMultiplayerOptionsList(MultiplayerOptions.OptionType.CultureTeam1);
+            
+            string tempFaction1 = "";
+            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.CultureTeam1).GetValue(out tempFaction1);
+            selectedIndex = factionStrings.IndexOf(tempFaction1);
+
             this.Faction1 = new SelectorVM<SelectorItemVM>(factionStrings, 0, new Action<SelectorVM<SelectorItemVM>>(this.OnFaction1Changed));
+
+            string tempFaction2 = "";
+            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.CultureTeam1).GetValue(out tempFaction2);
+            selectedIndex = factionStrings.IndexOf(tempFaction2);
+
             this.Faction2 = new SelectorVM<SelectorItemVM>(factionStrings, 0, new Action<SelectorVM<SelectorItemVM>>(this.OnFaction2Changed));
 
+            // Timers
+
+
+            // Troop Caps
             _infClassCap = AdminPanelClientData.Instance.InfantryCap;
             _archerClassCap = AdminPanelClientData.Instance.RangedCap;
             _cavClassCap = AdminPanelClientData.Instance.CavalryCap;
             _haClassCap = AdminPanelClientData.Instance.HorseArcherCap;
         }
 
+        public void UpdateAvailableMaps(List<string> maps)
+        {
+            this.maps = maps;
+        }
+
         private void OnGameTypeChanged(SelectorVM<SelectorItemVM> obj)
         {
-            // Update Map List
+            GameNetwork.BeginModuleEventAsClient();
+            GameNetwork.WriteMessage(new RequestMapsForGameType(obj.SelectedItem.StringItem));
+            GameNetwork.EndModuleEventAsClient();
         }
 
         private void OnMapChanged(SelectorVM<SelectorItemVM> obj)
         {
+
         }
 
         private void OnFaction1Changed(SelectorVM<SelectorItemVM> obj)

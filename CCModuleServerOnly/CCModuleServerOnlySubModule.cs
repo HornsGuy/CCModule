@@ -8,6 +8,7 @@ using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.ModuleManager;
+using CCModuleNetworkMessages.FromServer;
 
 namespace CCModuleServerOnly
 {

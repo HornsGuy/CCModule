@@ -38,6 +38,8 @@ namespace CCModuleClient
             GameNetwork.NetworkMessageHandlerRegisterer handlerRegisterer = new GameNetwork.NetworkMessageHandlerRegisterer(mode);
             handlerRegisterer.Register<AdminLoginMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<AdminLoginMessage>(this.HandleAdminLoginMessage));
             handlerRegisterer.Register<TroopCapServerMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<TroopCapServerMessage>(this.HandleTroopCapServerMessage));
+            handlerRegisterer.Register<SyncAdminPanelMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<SyncAdminPanelMessage>(this.HandleSyncAdminPanelMessage));
+            handlerRegisterer.Register<ReturnMapsForGameTypeMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<ReturnMapsForGameTypeMessage>(this.HandleReturnMapsForGameTypeMessage));
         }
 
         private void HandleAdminLoginMessage(AdminLoginMessage message)
@@ -46,20 +48,26 @@ namespace CCModuleClient
             CCModuleClientSubModule.playerIsAdmin = true;
         }
 
+        private void HandleSyncAdminPanelMessage(SyncAdminPanelMessage message)
+        {
+            AdminPanelClientData.Instance.Update(message);
+        }
+
         private void HandleTroopCapServerMessage(TroopCapServerMessage message)
         {
-            if(AdminPanelClientData.Instance.UpdateTroopCapsIfDifferent(message.InfantryCap, message.RangedCap, message.CavalryCap, message.HorseArcherCap))
+            if(AdminPanelClientData.Instance.UpdateTroopCapsIfDifferent(message.InfantryCap, message.RangedCap, message.CavalryCap, message.HorseArcherCap) && message.PrintMessage)
             {
-                TroopCapBehavior.UpdateTroopCaps(message.InfantryCap, message.RangedCap, message.CavalryCap, message.HorseArcherCap);
-                if(message.PrintMessage)
-                {
-                    ChatMessageManager.ServerMessage("Updated Troop Caps:");
-                    ChatMessageManager.ServerMessage("Inf: " + message.InfantryCap + "%");
-                    ChatMessageManager.ServerMessage("Range: " + message.RangedCap + "%");
-                    ChatMessageManager.ServerMessage("Cav: " + message.CavalryCap + "%");
-                    ChatMessageManager.ServerMessage("HA: " + message.HorseArcherCap + "%");
-                }
+                ChatMessageManager.ServerMessage("Updated Troop Caps:");
+                ChatMessageManager.ServerMessage("Inf: " + message.InfantryCap + "%");
+                ChatMessageManager.ServerMessage("Range: " + message.RangedCap + "%");
+                ChatMessageManager.ServerMessage("Cav: " + message.CavalryCap + "%");
+                ChatMessageManager.ServerMessage("HA: " + message.HorseArcherCap + "%");
             }
+        }
+        
+        private void HandleReturnMapsForGameTypeMessage(ReturnMapsForGameTypeMessage message)
+        {
+            AdminPanelClientData.Instance.UpdateAvailableMaps(message.AvailableMaps);
         }
 
         public override void OnAfterSave()
