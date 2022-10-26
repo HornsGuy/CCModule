@@ -3,6 +3,7 @@ using CCModuleNetworkMessages.FromClient;
 using CCModuleNetworkMessages.FromServer;
 using NetworkMessages.FromClient;
 using NetworkMessages.FromServer;
+using System.Collections.Generic;
 using System.Threading;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
@@ -123,8 +124,10 @@ namespace CCModuleServerOnly
         
         private bool HandleRequestMapsForGameType(NetworkCommunicator peer, RequestMapsForGameType message)
         {
+            List<string> maps = AdminPanel.Instance.GetMapsForGameType(message.GameType);
+
             GameNetwork.BeginModuleEventAsServer(peer);
-            GameNetwork.WriteMessage(new ReturnMapsForGameTypeMessage(AdminPanel.Instance.GetMapsForGameType(message.GameType)));
+            GameNetwork.WriteMessage(new ReturnMapsForGameTypeMessage(maps));
             GameNetwork.EndModuleEventAsServer();
             return true;
         }

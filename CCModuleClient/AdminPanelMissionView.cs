@@ -128,6 +128,8 @@ namespace CCModuleClient
 
         private List<string> factionStrings = new List<string>();
 
+        private bool beingUpdated = false;
+
         public AdminPanelVM()
         {
             // Game Mode
@@ -140,22 +142,19 @@ namespace CCModuleClient
             this.GameTypes = new SelectorVM<SelectorItemVM>(gameModes, selectedIndex, new Action<SelectorVM<SelectorItemVM>>(this.OnGameTypeChanged));
 
             // Maps
-            maps = AdminPanelClientData.Instance.AvailableMaps;
-            this.Maps = new SelectorVM<SelectorItemVM>(maps, 0, new Action<SelectorVM<SelectorItemVM>>(this.OnMapChanged));
+            UpdateAvailableMaps(AdminPanelClientData.Instance.AvailableMaps);
 
             // Factions
             factionStrings = MultiplayerOptions.Instance.GetMultiplayerOptionsList(MultiplayerOptions.OptionType.CultureTeam1);
             
             string tempFaction1 = "";
             MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.CultureTeam1).GetValue(out tempFaction1);
-            ChatMessageManager.ServerMessage(tempFaction1);
             selectedIndex = factionStrings.IndexOf(tempFaction1);
 
             this.Faction1 = new SelectorVM<SelectorItemVM>(factionStrings, selectedIndex, new Action<SelectorVM<SelectorItemVM>>(this.OnFaction1Changed));
 
             string tempFaction2 = "";
             MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.CultureTeam2).GetValue(out tempFaction2);
-            ChatMessageManager.ServerMessage(tempFaction2);
             selectedIndex = factionStrings.IndexOf(tempFaction2);
 
             this.Faction2 = new SelectorVM<SelectorItemVM>(factionStrings, selectedIndex, new Action<SelectorVM<SelectorItemVM>>(this.OnFaction2Changed));
@@ -170,9 +169,25 @@ namespace CCModuleClient
             _haClassCap = AdminPanelClientData.Instance.HorseArcherCap;
         }
 
+        public void IsUpdating(bool isUpdating)
+        {
+            this.beingUpdated = isUpdating;
+        }
+
         public void UpdateAvailableMaps(List<string> maps)
         {
+            beingUpdated = true;
+            
             this.maps = maps;
+
+            string tempMap = "";
+            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.Map).GetValue(out tempMap);
+            int selectedIndex = maps.IndexOf(tempMap);
+
+            this.Maps = new SelectorVM<SelectorItemVM>(maps, selectedIndex, new Action<SelectorVM<SelectorItemVM>>(this.OnMapChanged));
+            Maps.SelectedIndex = selectedIndex;
+
+            beingUpdated = false;
         }
 
         private void OnGameTypeChanged(SelectorVM<SelectorItemVM> obj)
