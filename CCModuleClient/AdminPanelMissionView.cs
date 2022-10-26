@@ -126,15 +126,7 @@ namespace CCModuleClient
 
         private List<string> maps = new List<string>();
 
-        private List<string> factionStrings = new List<string>()
-        {
-            "Aserai",
-            "Battania",
-            "Empire",
-            "Sturgia",
-            "Kuzait",
-            "Vlandia"
-        };
+        private List<string> factionStrings = new List<string>();
 
         public AdminPanelVM()
         {
@@ -156,15 +148,17 @@ namespace CCModuleClient
             
             string tempFaction1 = "";
             MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.CultureTeam1).GetValue(out tempFaction1);
+            ChatMessageManager.ServerMessage(tempFaction1);
             selectedIndex = factionStrings.IndexOf(tempFaction1);
 
-            this.Faction1 = new SelectorVM<SelectorItemVM>(factionStrings, 0, new Action<SelectorVM<SelectorItemVM>>(this.OnFaction1Changed));
+            this.Faction1 = new SelectorVM<SelectorItemVM>(factionStrings, selectedIndex, new Action<SelectorVM<SelectorItemVM>>(this.OnFaction1Changed));
 
             string tempFaction2 = "";
-            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.CultureTeam1).GetValue(out tempFaction2);
+            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.CultureTeam2).GetValue(out tempFaction2);
+            ChatMessageManager.ServerMessage(tempFaction2);
             selectedIndex = factionStrings.IndexOf(tempFaction2);
 
-            this.Faction2 = new SelectorVM<SelectorItemVM>(factionStrings, 0, new Action<SelectorVM<SelectorItemVM>>(this.OnFaction2Changed));
+            this.Faction2 = new SelectorVM<SelectorItemVM>(factionStrings, selectedIndex, new Action<SelectorVM<SelectorItemVM>>(this.OnFaction2Changed));
 
             // Timers
 
