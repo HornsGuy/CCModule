@@ -135,7 +135,7 @@ namespace CCModuleClient
         private int _warmupTimeInMinutes = 9;
 
         private int _infClassCap = 78;
-        private int _archerClassCap = 79;
+        private int _rangedClassCap = 79;
         private int _cavClassCap = 80;
         private int _haClassCap = 81;
 
@@ -185,7 +185,7 @@ namespace CCModuleClient
 
             // Troop Caps
             _infClassCap = AdminPanelClientData.Instance.InfantryCap;
-            _archerClassCap = AdminPanelClientData.Instance.RangedCap;
+            _rangedClassCap = AdminPanelClientData.Instance.RangedCap;
             _cavClassCap = AdminPanelClientData.Instance.CavalryCap;
             _haClassCap = AdminPanelClientData.Instance.HorseArcherCap;
         }
@@ -224,7 +224,7 @@ namespace CCModuleClient
             beingUpdated = true;
 
             InfantryCapPercentage = infCap;
-            ArcherCapPercentage = rangeCap;
+            RangedCapPercentage = rangeCap;
             CavCapPercentage = cavCap;
             HorseArcherCapPercentage = haCap;
 
@@ -240,7 +240,6 @@ namespace CCModuleClient
 
         private void OnMapChanged(SelectorVM<SelectorItemVM> obj)
         {
-
         }
 
         private void OnFaction1Changed(SelectorVM<SelectorItemVM> obj)
@@ -291,7 +290,7 @@ namespace CCModuleClient
             if(!beingUpdated)
             {
                 GameNetwork.BeginModuleEventAsClient();
-                GameNetwork.WriteMessage(new APUpdateTroopCapMessage(InfantryCapPercentage, ArcherCapPercentage, CavCapPercentage, HorseArcherCapPercentage));
+                GameNetwork.WriteMessage(new APUpdateTroopCapMessage(InfantryCapPercentage, RangedCapPercentage, CavCapPercentage, HorseArcherCapPercentage));
                 GameNetwork.EndModuleEventAsClient();
             }
         }
@@ -299,6 +298,12 @@ namespace CCModuleClient
         private async void ExecuteDone()
         {
             // Starts mission
+            GameNetwork.BeginModuleEventAsClient();
+            GameNetwork.WriteMessage(new APStartMissionMessage(GameTypes.SelectedItem.StringItem,
+                                                            Maps.SelectedItem.StringItem,
+                                                            Faction1.SelectedItem.StringItem,
+                                                            Faction2.SelectedItem.StringItem));
+            GameNetwork.EndModuleEventAsClient();
         }
         
         private async void ExecuteCancel()
@@ -453,18 +458,18 @@ namespace CCModuleClient
         }
 
         [DataSourceProperty]
-        public int ArcherCapPercentage
+        public int RangedCapPercentage
         {
             get
             {
-                return this._archerClassCap;
+                return this._rangedClassCap;
             }
             set
             {
-                if (value != this._archerClassCap)
+                if (value != this._rangedClassCap)
                 {
-                    _archerClassCap = value;
-                    base.OnPropertyChangedWithValue(value, "ArcherCapPercentage");
+                    _rangedClassCap = value;
+                    base.OnPropertyChangedWithValue(value, "RangedCapPercentage");
                 }
             }
         }

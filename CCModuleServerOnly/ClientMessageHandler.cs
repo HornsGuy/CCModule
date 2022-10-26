@@ -39,6 +39,7 @@ namespace CCModuleServerOnly
             handlerRegisterer.Register<RequestTroopIndexChange>(new GameNetworkMessage.ClientMessageHandlerDelegate<RequestTroopIndexChange>(this.HandleRequestTroopIndexChange));
             handlerRegisterer.Register<OpenAdminPanelMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<OpenAdminPanelMessage>(this.HandleOpenAdminPanelMessage));
             handlerRegisterer.Register<RequestMapsForGameType>(new GameNetworkMessage.ClientMessageHandlerDelegate<RequestMapsForGameType>(this.HandleRequestMapsForGameType));
+            handlerRegisterer.Register<APStartMissionMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<APStartMissionMessage>(this.HandleAPStartMissionMessage));
         }
 
         private bool HandleEndWarmupMessage(NetworkCommunicator peer, APEndWarmupMessage message)
@@ -138,6 +139,34 @@ namespace CCModuleServerOnly
             GameNetwork.BeginModuleEventAsServer(peer);
             GameNetwork.WriteMessage(AdminPanelData.Instance.CreateSyncMessage(false));
             GameNetwork.EndModuleEventAsServer();
+
+            return true;
+        }
+        
+        private bool HandleAPStartMissionMessage(NetworkCommunicator peer, APStartMissionMessage message)
+        {
+
+            if (CheckPeerIsAdminBanOtherwise(peer))
+            {
+                if (!AdminPanel.Instance.EndingCurrentMissionThenStartingNewMission)
+                {
+                    string startMissionMessage = "Changing Map:" +
+                                            "\nGame Type: " + message.GameType +
+                                            "\nMap: " + message.Map +
+                                            "\nFaction1: " + message.Faction1 +
+                                            "\nFaction2: " + message.Faction2;
+                    GameNetwork.BeginBroadcastModuleEvent();
+                    GameNetwork.WriteMessage(new ColoredChatMessage(startMissionMessage, 50, 200, 50));
+                    GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None, null);
+                    AdminPanel.Instance.StartMission(message.GameType, message.Map, message.Faction1, message.Faction2);
+                }
+                else
+                {
+                    GameNetwork.BeginBroadcastModuleEvent();
+                    GameNetwork.WriteMessage(new ColoredChatMessage("Mission is already being changed", 50, 200, 50));
+                    GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None, null);
+                }
+            }
 
             return true;
         }

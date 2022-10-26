@@ -104,10 +104,14 @@ namespace CCModuleServerOnly
         // To successfully change the map, this thread must be called when the mission has ended
         public static void ThreadProc(Object missionData)
         {
-            // Give us some buffer between the OnMissionEnd event and starting the next mission
-            Thread.Sleep(500);
+            while(Mission.Current != null)
+            {
+                Thread.Sleep(10);
+            }
 
-            // Prevent infinite loop if for some reason a call to StartMission 
+            // Give us some buffer between the OnMissionEnd event and starting the next mission
+            Thread.Sleep(2000);
+
             AdminPanel.Instance.StartMissionOnly((MissionData)missionData);
             AdminPanel.Instance.EndingCurrentMissionThenStartingNewMission = false;
         }
@@ -558,6 +562,16 @@ namespace CCModuleServerOnly
         private void ResetFactionVoteCount()
         {
             MultiplayerIntermissionVotingManager.Instance.ClearVotes();
+        }
+
+        public void StartMission(string gameType, string map, string faction1, string faction2)
+        {
+            MissionData newMissionData = getMultiplayerOptionsState();
+            newMissionData.gameType = gameType;
+            newMissionData.mapId = map;
+            newMissionData.cultureTeam1 = faction1;
+            newMissionData.cultureTeam2 = faction2;
+            StartMission(newMissionData);
         }
 
         public void StartMission(MissionData missionData)

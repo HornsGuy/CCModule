@@ -40,6 +40,7 @@ namespace CCModuleClient
             handlerRegisterer.Register<TroopCapServerMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<TroopCapServerMessage>(this.HandleTroopCapServerMessage));
             handlerRegisterer.Register<SyncAdminPanelMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<SyncAdminPanelMessage>(this.HandleSyncAdminPanelMessage));
             handlerRegisterer.Register<ReturnMapsForGameTypeMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<ReturnMapsForGameTypeMessage>(this.HandleReturnMapsForGameTypeMessage));
+            handlerRegisterer.Register<ColoredChatMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<ColoredChatMessage>(this.HandleColoredChatMessage));
         }
 
         private void HandleAdminLoginMessage(AdminLoginMessage message)
@@ -68,6 +69,25 @@ namespace CCModuleClient
         private void HandleReturnMapsForGameTypeMessage(ReturnMapsForGameTypeMessage message)
         {
             AdminPanelClientData.Instance.UpdateAvailableMaps(message.AvailableMaps);
+        }
+        
+        private void HandleColoredChatMessage(ColoredChatMessage message)
+        {
+            List<string> lines = new List<string>();
+            if (message.Message.Contains("\n"))
+            {
+                lines = new List<string>(message.Message.Split('\n'));
+            }
+            else
+            {
+                lines.Add(message.Message);
+            }
+
+            foreach (var line in lines)
+            {
+                ChatMessageManager.AddMessage(line, message.Red, message.Green, message.Blue);
+            }
+            
         }
 
         public override void OnAfterSave()
