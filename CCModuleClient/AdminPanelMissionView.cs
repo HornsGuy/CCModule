@@ -25,15 +25,34 @@ namespace CCModuleClient
             this.ViewOrderPriority = 10;
         }
 
-        public static void UpdateAvailableMaps(List<string> maps)
+        private static AdminPanelMissionView GetMissionViewIfExists()
         {
             if (Mission.Current != null)
             {
                 AdminPanelMissionView adminPanelMissionView = Mission.Current.GetMissionBehavior<AdminPanelMissionView>();
-                if (adminPanelMissionView != null && adminPanelMissionView._dataSource != null)
+                if(adminPanelMissionView != null && adminPanelMissionView._dataSource != null)
                 {
-                    adminPanelMissionView._dataSource.UpdateAvailableMaps(maps);
+                    return adminPanelMissionView;
                 }
+            }
+            return null;
+        }
+
+        public static void UpdateAvailableMaps(List<string> maps)
+        {
+            AdminPanelMissionView adminPanelMissionView = GetMissionViewIfExists();
+            if (adminPanelMissionView != null)
+            {
+                adminPanelMissionView._dataSource.UpdateAvailableMaps(maps);
+            }
+        }
+
+        public static void UpdateTroopCaps(int infCap, int rangeCap, int cavCap, int haCap)
+        {
+            AdminPanelMissionView adminPanelMissionView = GetMissionViewIfExists();
+            if (adminPanelMissionView != null)
+            {
+                adminPanelMissionView._dataSource.UpdateTroopCaps(infCap,rangeCap,cavCap,haCap);
             }
         }
 
@@ -134,7 +153,8 @@ namespace CCModuleClient
         {
             // Game Mode
             gameModes = MultiplayerOptions.Instance.GetMultiplayerOptionsList(MultiplayerOptions.OptionType.GameType);
-            
+            gameModes.Sort();
+
             string tempGameType = "";
             MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.GameType).GetValue(out tempGameType);
             int selectedIndex = gameModes.IndexOf(tempGameType);
@@ -146,7 +166,8 @@ namespace CCModuleClient
 
             // Factions
             factionStrings = MultiplayerOptions.Instance.GetMultiplayerOptionsList(MultiplayerOptions.OptionType.CultureTeam1);
-            
+            factionStrings.Sort();
+
             string tempFaction1 = "";
             MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.CultureTeam1).GetValue(out tempFaction1);
             selectedIndex = factionStrings.IndexOf(tempFaction1);
@@ -179,6 +200,7 @@ namespace CCModuleClient
             beingUpdated = true;
             
             this.maps = maps;
+            maps.Sort();
 
             string tempMap = "";
             MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.Map).GetValue(out tempMap);
@@ -186,6 +208,25 @@ namespace CCModuleClient
 
             this.Maps = new SelectorVM<SelectorItemVM>(maps, selectedIndex, new Action<SelectorVM<SelectorItemVM>>(this.OnMapChanged));
             Maps.SelectedIndex = selectedIndex;
+
+            string tempGameType = "";
+            MultiplayerOptions.Instance.GetOptionFromOptionType(MultiplayerOptions.OptionType.GameType).GetValue(out tempGameType);
+            if(tempGameType != GameTypes.SelectedItem.StringItem)
+            {
+                Maps.SelectedIndex = -1;
+            }
+
+            beingUpdated = false;
+        }
+        
+        public void UpdateTroopCaps(int infCap, int rangeCap, int cavCap, int haCap)
+        {
+            beingUpdated = true;
+
+            InfantryCapPercentage = infCap;
+            ArcherCapPercentage = rangeCap;
+            CavCapPercentage = cavCap;
+            HorseArcherCapPercentage = haCap;
 
             beingUpdated = false;
         }
@@ -247,9 +288,12 @@ namespace CCModuleClient
 
         private void SendTroopCapUpdateMessage()
         {
-            GameNetwork.BeginModuleEventAsClient();
-            GameNetwork.WriteMessage(new APUpdateTroopCapMessage(InfantryCapPercentage, ArcherCapPercentage, CavCapPercentage, HorseArcherCapPercentage));
-            GameNetwork.EndModuleEventAsClient();
+            if(!beingUpdated)
+            {
+                GameNetwork.BeginModuleEventAsClient();
+                GameNetwork.WriteMessage(new APUpdateTroopCapMessage(InfantryCapPercentage, ArcherCapPercentage, CavCapPercentage, HorseArcherCapPercentage));
+                GameNetwork.EndModuleEventAsClient();
+            }
         }
 
         private async void ExecuteDone()
