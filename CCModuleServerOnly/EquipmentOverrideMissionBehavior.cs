@@ -110,23 +110,39 @@ namespace CCModuleServerOnly
             return equipmentToOverride.ContainsKey(ID);
         }
 
-        class ThreadedAgentChange
+        private bool AgentIsReadyToBeReplaced(Agent a)
         {
-            public static void ThreadProc(Object obj)
+            if(a != null)
             {
-                Tuple<string, List<Tuple<EquipmentIndex, string>>> overrideInfo = (Tuple<string, List<Tuple<EquipmentIndex, string>>>)obj;
-                while (AdminPanel.Instance.GetPlayerNetworkPeerFromID(overrideInfo.Item1).ControlledAgent == null)
-                {
-                    Thread.Sleep(10);
-                }
-                AdminPanel.Instance.GivePlayerAgentCosmeticEquipment(overrideInfo.Item1, overrideInfo.Item2);
+                return a.HasBeenBuilt &&
+                    a.State == AgentState.Active &&
+                    a.IsActive() &&
+                    a.IsPlayerControlled &&
+                    a.MissionRepresentative != null &&
+                    a.MissionPeer != null;
             }
+            return false;
         }
 
-        protected override void OnAgentControllerChanged(Agent agent, Agent.ControllerType oldController)
+        private void ThreadProc(Object obj)
         {
-            base.OnAgentControllerChanged(agent, oldController);
-            //Debug.Print("Agent Spawning", 0, Debug.DebugColor.Yellow);
+            int count = 0;
+
+            Tuple<string, List<Tuple<EquipmentIndex, string>>> overrideInfo = (Tuple<string, List<Tuple<EquipmentIndex, string>>>)obj;
+
+            while (!AgentIsReadyToBeReplaced(AdminPanel.Instance.GetPlayerNetworkPeerFromID(overrideInfo.Item1).ControlledAgent))
+            {
+                Thread.Sleep(1);
+                count += 1;
+            }
+
+            Debug.Print($"Slept for {count} iterations");
+
+            AdminPanel.Instance.GivePlayerAgentCosmeticEquipment(overrideInfo.Item1, overrideInfo.Item2);
+        }
+
+        public override void OnAgentBuild(Agent agent, Banner banner)
+        {
 
             if (agent.IsHuman)
             {
@@ -143,7 +159,7 @@ namespace CCModuleServerOnly
                         //Debug.Print("Overriding " + ID, 0, Debug.DebugColor.Yellow); 
                         lastSpawnForPlayerWasOverride[ID] = true;
 
-                        Thread t = new Thread(new ParameterizedThreadStart(ThreadedAgentChange.ThreadProc));
+                        Thread t = new Thread(new ParameterizedThreadStart(ThreadProc));
                         t.Start(new Tuple<string, List<Tuple<EquipmentIndex, string>>>(ID, equipmentToOverride[ID]));
                     }
                     else
