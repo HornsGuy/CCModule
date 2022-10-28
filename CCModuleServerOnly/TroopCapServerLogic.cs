@@ -1,6 +1,8 @@
 ﻿using ClientServerShared;
+using NetworkMessages.FromServer;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +10,7 @@ using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
+using TaleWorlds.MountAndBlade.Network.Messages;
 using TaleWorlds.ObjectSystem;
 
 namespace CCModuleServerOnly
@@ -49,43 +52,40 @@ namespace CCModuleServerOnly
             return toReturn;
         }
 
-        private List<int> GetPlayersTeamTroopIndeces(MissionPeer playerPeer)
+
+        public bool CheckIfPlayerTroopIndexIsUnderCap(MissionPeer playerPeer, int troopIndex)
         {
-            List<int> toReturn = new List<int>();
-            foreach (var peer in GameNetwork.NetworkPeers)
+            Dictionary<string, int> troopTypePercent = new Dictionary<string, int>();
+            troopTypePercent.Add(new TextObject("{=1Bm1Wk1v}Infantry").ToString(), AdminPanelServerData.Instance.InfantryCap);
+            troopTypePercent.Add(new TextObject("{=rangedtroop}Ranged").ToString(), AdminPanelServerData.Instance.RangedCap);
+            troopTypePercent.Add(new TextObject("{=YVGtcLHF}Cavalry").ToString(), AdminPanelServerData.Instance.CavalryCap);
+            troopTypePercent.Add(new TextObject("{=ugJfuabA}Horse Archer").ToString(), AdminPanelServerData.Instance.HorseArcherCap);
+
+            Dictionary<int, string> typeDictionaryForPlayerTeam = playerPeer.Culture.ToString().ToLower() == MultiplayerOptions.OptionType.CultureTeam1.GetStrValue().ToLower() ? troopIndexToTypeTeam1 : troopIndexToTypeTeam2;
+            List<int> troopIndeces = PlayerWrapper.GetPeerTeamTroopIndeces(playerPeer, true);
+
+            Dictionary<string, float> currentTroopBreakdown = TroopCapLogic.GetCurrentTeamClassTypeBreakdown(troopIndeces, typeDictionaryForPlayerTeam, troopTypePercent.Keys.ToList());
+            Dictionary<string, bool> classIsAvailable = TroopCapLogic.GetTroopClassAvailabilityDictionary(currentTroopBreakdown, troopTypePercent);
+
+            return classIsAvailable[typeDictionaryForPlayerTeam[troopIndex]];
+        }
+
+        public void OnTroopCapChange()
+        {
+            foreach (var netPeer in GameNetwork.NetworkPeers)
             {
-                MissionPeer teamMatePeer = peer.GetComponent<MissionPeer>();
-                if(teamMatePeer != null && teamMatePeer.Team != null && playerPeer.Team != null)
+                MissionPeer mp = netPeer.GetComponent<MissionPeer>();
+                if(mp != null)
                 {
-                    if(teamMatePeer.Team.Side == playerPeer.Team.Side)
+                    if(!CheckIfPlayerTroopIndexIsUnderCap(mp, mp.SelectedTroopIndex))
                     {
-                        toReturn.Add(teamMatePeer.SelectedTroopIndex);
+                        mp.SelectedTroopIndex = 0;
+                        GameNetwork.BeginBroadcastModuleEvent();
+                        GameNetwork.WriteMessage((GameNetworkMessage)new UpdateSelectedTroopIndex(netPeer, 0));
+                        GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.ExcludeOtherTeamPlayers, netPeer);
                     }
                 }
             }
-            return toReturn;
-        }
-
-        public bool CheckIfPlayerTroopIndexIsUnderCap(MissionPeer playerPeer,int troopIndex)
-        {
-            Dictionary<string, int> troopTypePercent = new Dictionary<string, int>();
-            troopTypePercent.Add(new TextObject("{=1Bm1Wk1v}Infantry").ToString(), AdminPanelData.Instance.InfantryCap);
-            troopTypePercent.Add(new TextObject("{=rangedtroop}Ranged").ToString(), AdminPanelData.Instance.RangedCap);
-            troopTypePercent.Add(new TextObject("{=YVGtcLHF}Cavalry").ToString(), AdminPanelData.Instance.CavalryCap);
-            troopTypePercent.Add(new TextObject("{=ugJfuabA}Horse Archer").ToString(), AdminPanelData.Instance.HorseArcherCap);
-
-            Dictionary<int, string> typeDictionaryForPlayerTeam = playerPeer.Culture.ToString().ToLower() == MultiplayerOptions.OptionType.CultureTeam1.GetStrValue().ToLower() ? troopIndexToTypeTeam1 : troopIndexToTypeTeam2;
-            Dictionary<string, float> currentTroopBreakdown = TroopCapLogic.GetCurrentTeamClassTypeBreakdown(GetPlayersTeamTroopIndeces(playerPeer), typeDictionaryForPlayerTeam, troopTypePercent.Keys.ToList());
-
-            Dictionary<string, bool> classIsAvailable = TroopCapLogic.GetTroopClassAvailabilityDictionary(currentTroopBreakdown, troopTypePercent);
-
-            //Debug.Print(troopIndex.ToString(), 0,Debug.DebugColor.Magenta);
-            //Debug.Print(typeDictionaryForPlayerTeam[troopIndex], 0,Debug.DebugColor.Magenta);
-            //Debug.Print(classIsAvailable[typeDictionaryForPlayerTeam[troopIndex]].ToString(), 0,Debug.DebugColor.Magenta);
-            //Debug.Print(currentTroopBreakdown[typeDictionaryForPlayerTeam[troopIndex]].ToString(), 0,Debug.DebugColor.Magenta);
-            //Debug.Print(AdminPanelData.Instance.InfantryCap.ToString(), 0,Debug.DebugColor.Magenta);
-
-            return classIsAvailable[typeDictionaryForPlayerTeam[troopIndex]];
         }
     }
 }

@@ -30,19 +30,6 @@ namespace CCModuleClient
 
         private Dictionary<string, int> troopTypePercent = new Dictionary<string, int>();
 
-        public static void UpdateTroopCaps(int infCap, int rangeCap, int cavCap, int haCap)
-        {
-            if(Mission.Current != null)
-            {
-                TroopCapBehavior troopCapBehavior = Mission.Current.GetMissionBehavior<TroopCapBehavior>();
-                if(troopCapBehavior != null)
-                {
-                    troopCapBehavior.UpdateTroopCapsInternal(infCap, rangeCap, cavCap, haCap);
-                    troopCapBehavior.RefreshLoadoutVM();
-                }
-            }
-        }
-
         public TroopCapBehavior(MissionGauntletClassLoadout loadoutMissionView, int infCap, int rangeCap, int cavCap, int haCap)
         {
             _loadoutMissionView = loadoutMissionView;
@@ -53,12 +40,23 @@ namespace CCModuleClient
             troopTypePercent.Add(new TextObject("{=rangedtroop}Ranged").ToString(), rangeCap);
             troopTypePercent.Add(new TextObject("{=YVGtcLHF}Cavalry").ToString(), cavCap);
             troopTypePercent.Add(new TextObject("{=ugJfuabA}Horse Archer").ToString(), haCap);
+
+            AdminPanelClientData.Instance.OnTroopCapsUpdated += OnTroopCapUpdate;
         }
 
         public void Setup()
         {
             troopIndexToTypeTeam1 = PopulateTroopIndexToTypeDictionary(MultiplayerClassDivisions.GetMPHeroClasses(MBObjectManager.Instance.GetObject<BasicCultureObject>(MultiplayerOptions.OptionType.CultureTeam1.GetStrValue())).ToList());
             troopIndexToTypeTeam2 = PopulateTroopIndexToTypeDictionary(MultiplayerClassDivisions.GetMPHeroClasses(MBObjectManager.Instance.GetObject<BasicCultureObject>(MultiplayerOptions.OptionType.CultureTeam2.GetStrValue())).ToList());
+        }
+
+        private void OnTroopCapUpdate()
+        {
+            troopTypePercent[new TextObject("{=1Bm1Wk1v}Infantry").ToString()] = AdminPanelClientData.Instance.InfantryCap;
+            troopTypePercent[new TextObject("{=rangedtroop}Ranged").ToString()] = AdminPanelClientData.Instance.RangedCap;
+            troopTypePercent[new TextObject("{=YVGtcLHF}Cavalry").ToString()] = AdminPanelClientData.Instance.CavalryCap;
+            troopTypePercent[new TextObject("{=ugJfuabA}Horse Archer").ToString()] = AdminPanelClientData.Instance.HorseArcherCap;
+            RefreshLoadoutVM();
         }
 
         private Dictionary<int, string> PopulateTroopIndexToTypeDictionary(List<MultiplayerClassDivisions.MPHeroClass> classes)
@@ -118,21 +116,15 @@ namespace CCModuleClient
             return toReturn;
         }
 
-        private void UpdateTroopCapsInternal(int infCap, int rangeCap, int cavCap, int haCap)
-        {
-            troopTypePercent[new TextObject("{=1Bm1Wk1v}Infantry").ToString()] = infCap;
-            troopTypePercent[new TextObject("{=rangedtroop}Ranged").ToString()] = rangeCap;
-            troopTypePercent[new TextObject("{=YVGtcLHF}Cavalry").ToString()] = cavCap;
-            troopTypePercent[new TextObject("{=ugJfuabA}Horse Archer").ToString()] = haCap;
-        }
 
         public void RefreshLoadoutVM()
         {
             if(_vm != null)
             {
                 ResetVM();
-                Dictionary<string, float> currentTroopBreakdown = TroopCapLogic.GetCurrentTeamClassTypeBreakdown(PlayerWrapper.GetMyTeamTroopIndeces(),GetTroopIndexToTroopTypeDictionary(_vm.Classes.ToList()), troopTypePercent.Keys.ToList());
+                Dictionary<string, float> currentTroopBreakdown = TroopCapLogic.GetCurrentTeamClassTypeBreakdown(PlayerWrapper.GetPeerTeamTroopIndeces(PlayerWrapper.GetMyMissionPeer(),true), GetTroopIndexToTroopTypeDictionary(_vm.Classes.ToList()), troopTypePercent.Keys.ToList());
                 Dictionary<string, bool> classIsAvailable = TroopCapLogic.GetTroopClassAvailabilityDictionary(currentTroopBreakdown, troopTypePercent);
+                
                 foreach (var troopTypeGroup in _vm.Classes)
                 {
                     int currentTypePercent = troopTypePercent[troopTypeGroup.Name];

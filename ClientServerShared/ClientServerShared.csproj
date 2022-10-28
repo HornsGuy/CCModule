@@ -39,8 +39,16 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="TaleWorlds.Core">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Dedicated Server\bin\Win64_Shipping_Server\TaleWorlds.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="TaleWorlds.MountAndBlade">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Dedicated Server\bin\Win64_Shipping_Server\TaleWorlds.MountAndBlade.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminPanelData.cs" />
+    <Compile Include="PlayerWrapper.cs" />
     <Compile Include="TroopCapLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

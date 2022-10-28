@@ -183,5 +183,30 @@ namespace ClientServerSharedTests
             }
             Assert.IsTrue(actual.Count == 0);
         }
+
+        [TestMethod]
+        public void EmptyBreakdownTest()
+        {
+            Dictionary<string, float> currentBreakdown = new Dictionary<string, float>();
+
+            Dictionary<string, int> troopCapPercents = new Dictionary<string, int>();
+            troopCapPercents.Add("Infantry", 100);
+            troopCapPercents.Add("Ranged", 50);
+            troopCapPercents.Add("Cavalry", 0);
+
+            Dictionary<string, bool> expected = new Dictionary<string, bool>();
+            expected.Add("Infantry", true);
+            expected.Add("Ranged", true);
+            expected.Add("Cavalry", false);
+
+            Dictionary<string, bool> actual = TroopCapLogic.GetTroopClassAvailabilityDictionary(currentBreakdown, troopCapPercents);
+
+            foreach (var keyVal in expected)
+            {
+                Assert.AreEqual(keyVal.Value, actual[keyVal.Key]);
+                actual.Remove(keyVal.Key);
+            }
+            Assert.IsTrue(actual.Count == 0);
+        }
     }
 }

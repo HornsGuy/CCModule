@@ -64,14 +64,14 @@ namespace CCModuleServerOnly
         private void SyncAdminPanelSettingsWithClients(NetworkCommunicator peer)
         {
             GameNetwork.BeginModuleEventAsServer(peer);
-            GameNetwork.WriteMessage(AdminPanelData.Instance.CreateSyncMessage(false));
+            GameNetwork.WriteMessage(AdminPanelServerData.Instance.CreateSyncMessage(false));
             GameNetwork.EndModuleEventAsServer();
         }
 
         private void SyncTroopCapWithClients()
         {
             GameNetwork.BeginBroadcastModuleEvent();
-            GameNetwork.WriteMessage(new TroopCapServerMessage(AdminPanelData.Instance.InfantryCap, AdminPanelData.Instance.RangedCap, AdminPanelData.Instance.CavalryCap, AdminPanelData.Instance.HorseArcherCap,true));
+            GameNetwork.WriteMessage(AdminPanelServerData.Instance.CreateTroopCapServerMessage(true));
             GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None);
         }
 
@@ -93,9 +93,10 @@ namespace CCModuleServerOnly
 
         private bool HandleUpdateTroopCapMessage(NetworkCommunicator peer, APUpdateTroopCapMessage message)
         {
-            if(CheckPeerIsAdminBanOtherwise(peer) && AdminPanelData.Instance.UpdateTroopCapsIfDifferent(message.InfantryCap, message.RangedCap, message.CavalryCap, message.HorseArcherCap))
+            if(CheckPeerIsAdminBanOtherwise(peer) && AdminPanelServerData.Instance.UpdateTroopCapsIfDifferent(message.InfantryCap, message.RangedCap, message.CavalryCap, message.HorseArcherCap))
             {
                 SyncTroopCapWithClients();
+                TroopCapServerLogic.Instance.OnTroopCapChange();
             }
             
             return true;
@@ -118,8 +119,9 @@ namespace CCModuleServerOnly
         private bool HandleRequestTroopIndexChange(NetworkCommunicator peer, RequestTroopIndexChange message)
         {
             // Get what type of troop the peer is changing to and see if they are exceeding the troop cap
+            // This is just in case of a hacked client
             MissionPeer missionPeer = peer.GetComponent<MissionPeer>();
-            if (!TroopCapServerLogic.Instance.CheckIfPlayerTroopIndexIsUnderCap(missionPeer, message.SelectedTroopIndex))
+            if (!TroopCapServerLogic.Instance.CheckIfPlayerTroopIndexIsUnderCap(missionPeer,message.SelectedTroopIndex))
             {
                 Thread t = new Thread(new ParameterizedThreadStart(SetSelectedTroopIndexThread));
                 t.Start(peer);
@@ -141,7 +143,7 @@ namespace CCModuleServerOnly
         {
             // Turn around and send the player the admin panel data
             GameNetwork.BeginModuleEventAsServer(peer);
-            GameNetwork.WriteMessage(AdminPanelData.Instance.CreateSyncMessage(false));
+            GameNetwork.WriteMessage(AdminPanelServerData.Instance.CreateSyncMessage(false));
             GameNetwork.EndModuleEventAsServer();
 
             return true;

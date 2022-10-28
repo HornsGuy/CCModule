@@ -22,8 +22,11 @@ namespace ClientServerShared
             float total = 0;
             foreach (var troopIndex in myTeamTroopIndexes)
             {
-                troopTypeCount[troopIndexToTroopType[troopIndex]] += 1;
-                total += 1;
+                if(troopIndexToTroopType.ContainsKey(troopIndex))
+                {
+                    troopTypeCount[troopIndexToTroopType[troopIndex]] += 1;
+                    total += 1;
+                }
             }
 
             // Take the totals and convert it into the breakdown
@@ -41,9 +44,9 @@ namespace ClientServerShared
         {
             Dictionary<string, bool> toReturn = new Dictionary<string, bool>();
 
-            foreach (var keyVal in currentTroopBreakdown)
+            foreach (var keyVal in troopCapPercent)
             {
-                bool isAvailable = keyVal.Value < troopCapPercent[keyVal.Key];
+                bool isAvailable = true; 
 
                 if(troopCapPercent[keyVal.Key] == 0)
                 {
@@ -52,6 +55,10 @@ namespace ClientServerShared
                 else if(troopCapPercent[keyVal.Key] == 100)
                 {
                     isAvailable = true;
+                }
+                else if(currentTroopBreakdown.ContainsKey(keyVal.Key))
+                {
+                    isAvailable = currentTroopBreakdown[keyVal.Key] < keyVal.Value;
                 }
                 
                 toReturn.Add(keyVal.Key, isAvailable);

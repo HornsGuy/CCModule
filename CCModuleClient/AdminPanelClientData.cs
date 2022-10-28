@@ -1,4 +1,5 @@
 ﻿using CCModuleNetworkMessages.FromServer;
+using ClientServerShared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CCModuleClient
 {
-    class AdminPanelClientData
+    class AdminPanelClientData : AdminPanelData
     {
         static AdminPanelClientData _instance;
         static public AdminPanelClientData Instance
@@ -27,34 +28,5 @@ namespace CCModuleClient
             UpdateTroopCapsIfDifferent(message.InfantryCap, message.RangedCap, message.CavalryCap, message.HorseArcherCap);
             UpdateAvailableMaps(message.AvailableMaps);
         }
-
-        public bool UpdateTroopCapsIfDifferent(int infCap, int rangeCap, int cavCap, int haCap)
-        {
-            if (InfantryCap != infCap || RangedCap != rangeCap || CavalryCap != cavCap || HorseArcherCap != haCap)
-            {
-                InfantryCap = infCap;
-                RangedCap = rangeCap;
-                CavalryCap = cavCap;
-                HorseArcherCap = haCap;
-
-                TroopCapBehavior.UpdateTroopCaps(InfantryCap, RangedCap, CavalryCap, HorseArcherCap);
-
-                return true;
-            }
-            return false;
-        }
-
-        public void UpdateAvailableMaps(List<string> maps)
-        {
-            AvailableMaps = maps;
-            AdminPanelMissionView.UpdateAvailableMaps(maps);
-        }
-
-        public int InfantryCap { get; private set; }
-        public int RangedCap { get; private set; }
-        public int CavalryCap { get; private set; }
-        public int HorseArcherCap { get; private set; }
-
-        public List<string> AvailableMaps { get; private set; } = new List<string>();
     }
 }

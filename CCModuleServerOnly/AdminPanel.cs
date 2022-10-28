@@ -19,57 +19,6 @@ using CCModuleNetworkMessages.FromServer;
 namespace CCModuleServerOnly
 {
 
-    public class AdminPanelData
-    {
-        static AdminPanelData _instance;
-        public static AdminPanelData Instance
-        {
-            get
-            {
-                if(_instance == null)
-                {
-                    _instance = new AdminPanelData();
-                }
-                return _instance;
-            }
-        }
-
-        AdminPanelData()
-        {
-            InfantryCap = 100;
-            RangedCap = 100;
-            CavalryCap = 100;
-            HorseArcherCap = 100;
-        }
-
-        public bool UpdateTroopCapsIfDifferent(int infCap, int rangeCap, int cavCap, int haCap)
-        {
-            if (InfantryCap != infCap || RangedCap != rangeCap || CavalryCap != cavCap || HorseArcherCap != haCap)
-            {
-                InfantryCap = infCap;
-                RangedCap = rangeCap;
-                CavalryCap = cavCap;
-                HorseArcherCap = haCap;
-                return true;
-            }
-            return false;
-        }
-
-        public int InfantryCap { get; set; }
-        public int RangedCap { get; set; }
-        public int CavalryCap { get; set; }
-        public int HorseArcherCap { get; set; }
-
-        public SyncAdminPanelMessage CreateSyncMessage(bool printUpdatedValues)
-        {
-            SyncAdminPanelMessage syncMessage = new SyncAdminPanelMessage();
-            syncMessage.SetTroopCaps(InfantryCap, RangedCap, CavalryCap, HorseArcherCap);
-            syncMessage.AvailableMaps = AdminPanel.Instance.GetAllAvailableMaps();
-            return syncMessage;
-        }
-
-    }
-
     public struct MissionData
     {
         public string gameType;
@@ -480,7 +429,6 @@ namespace CCModuleServerOnly
                     GameNetwork.BeginBroadcastModuleEvent();
                     GameNetwork.WriteMessage((GameNetworkMessage)new WarmupStateChange(MultiplayerWarmupComponent.WarmupStates.InProgress, timer.GetCurrentTimerStartTime().NumberOfTicks));
                     GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None);
-                    Debug.Print("Changed!!!!", 0, Debug.DebugColor.Magenta);
                 }
             }
         }

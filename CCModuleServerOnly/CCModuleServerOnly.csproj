@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminPanel.cs" />
+    <Compile Include="AdminPanelServerData.cs" />
     <Compile Include="ClientMessageHandler.cs" />
     <Compile Include="CCModuleGameHandler.cs" />
     <Compile Include="CCModuleServerOnlySubModule.cs" />

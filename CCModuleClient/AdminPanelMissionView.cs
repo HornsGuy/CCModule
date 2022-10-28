@@ -23,6 +23,7 @@ namespace CCModuleClient
         public AdminPanelMissionView()
         {
             this.ViewOrderPriority = 10;
+            AdminPanelClientData.Instance.OnAvailableMapsUpdated += UpdateAvailableMaps;
         }
 
         private static AdminPanelMissionView GetMissionViewIfExists()
@@ -38,7 +39,7 @@ namespace CCModuleClient
             return null;
         }
 
-        public static void UpdateAvailableMaps(List<string> maps)
+        private void UpdateAvailableMaps(List<string> maps)
         {
             AdminPanelMissionView adminPanelMissionView = GetMissionViewIfExists();
             if (adminPanelMissionView != null)
