@@ -51,9 +51,12 @@ namespace CCModuleServerOnly
 
         private bool HandleClientListeningMessage(NetworkCommunicator peer, ClientListeningMessage message)
         {
-            GameNetwork.BeginModuleEventAsServer(peer);
-            GameNetwork.WriteMessage(new AdminLoginMessage());
-            GameNetwork.EndModuleEventAsServer();
+            if(PlayerManager.Instance.PlayerIsAdmin(peer.VirtualPlayer.Id.ToString()))
+            {
+                GameNetwork.BeginModuleEventAsServer(peer);
+                GameNetwork.WriteMessage(new AdminLoginMessage());
+                GameNetwork.EndModuleEventAsServer();
+            }
             SyncAdminPanelSettingsWithClients(peer);
             return true;
         }
@@ -82,6 +85,7 @@ namespace CCModuleServerOnly
             {
                 // Ban the person using a hacked client
                 PlayerManager.Instance.BanPlayer(peer.VirtualPlayer.UserName, peer.VirtualPlayer.Id.ToString());
+                AdminPanel.Instance.SendServerMessageToPeer(peer, "You have been banned from the server.");
                 AdminPanel.Instance.KickPlayer(peer);
                 return false;
             }
@@ -155,16 +159,12 @@ namespace CCModuleServerOnly
                                             "\nMap: " + message.Map +
                                             "\nFaction1: " + message.Faction1 +
                                             "\nFaction2: " + message.Faction2;
-                    GameNetwork.BeginBroadcastModuleEvent();
-                    GameNetwork.WriteMessage(new ColoredChatMessage(startMissionMessage, 50, 200, 50));
-                    GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None, null);
+                    AdminPanel.Instance.BroadcastServerMessage(startMissionMessage);
                     AdminPanel.Instance.StartMission(message.GameType, message.Map, message.Faction1, message.Faction2);
                 }
                 else
                 {
-                    GameNetwork.BeginBroadcastModuleEvent();
-                    GameNetwork.WriteMessage(new ColoredChatMessage("Mission is already being changed", 50, 200, 50));
-                    GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None, null);
+                    AdminPanel.Instance.SendServerMessageToPeer(peer, "Mission is already being changed.");
                 }
             }
 

@@ -35,16 +35,15 @@ namespace CCModuleClient
             List<int> toReturn = new List<int>();
 
             MissionPeer myMP = GetMyMissionPeer();
-            if (myMP != null)
+            if (myMP != null && myMP.Team != null)
             {
                 TaleWorlds.Core.BattleSideEnum mySide = myMP.Team.Side;
-
                 foreach (var peer in GameNetwork.NetworkPeers)
                 {
                     if (peer != GameNetwork.MyPeer || includeMyself)
                     {
                         MissionPeer mp = peer.GetComponent<MissionPeer>();
-                        if (mp != null && mp.Team.Side == mySide)
+                        if (mp != null && mp.Team != null && mp.Team.Side == mySide)
                         {
                             toReturn.Add(mp.SelectedTroopIndex);
                         }

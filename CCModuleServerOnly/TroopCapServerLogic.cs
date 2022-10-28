@@ -55,7 +55,7 @@ namespace CCModuleServerOnly
             foreach (var peer in GameNetwork.NetworkPeers)
             {
                 MissionPeer teamMatePeer = peer.GetComponent<MissionPeer>();
-                if(teamMatePeer != null)
+                if(teamMatePeer != null && teamMatePeer.Team != null && playerPeer.Team != null)
                 {
                     if(teamMatePeer.Team.Side == playerPeer.Team.Side)
                     {

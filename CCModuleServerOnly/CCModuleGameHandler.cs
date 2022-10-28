@@ -21,6 +21,7 @@ namespace CCModuleServerOnly
             // Kick players who have been banned
             if(PlayerManager.Instance.PlayerIsBanned(peer.Id.ToString()))
             {
+                AdminPanel.Instance.SendServerMessageToPeer(peer.Id.ToString(), "You have been banned from the server.");
                 DedicatedCustomServerSubModule.Instance.DedicatedCustomGameServer.KickPlayer(peer.Id, true);
             }
 

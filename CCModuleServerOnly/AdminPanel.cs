@@ -806,5 +806,40 @@ namespace CCModuleServerOnly
             }
             return false;
         }
+
+        public void SendServerMessageToPeer(NetworkCommunicator peer, string message)
+        {
+            GameNetwork.BeginModuleEventAsServer(peer);
+            GameNetwork.WriteMessage(new ColoredChatMessage(message, 50, 200, 50));
+            GameNetwork.EndModuleEventAsServer();
+        }
+
+        public void BroadcastServerMessage(string message)
+        {
+            GameNetwork.BeginBroadcastModuleEvent();
+            GameNetwork.WriteMessage(new ColoredChatMessage(message, 50, 200, 50));
+            GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None, null);
+        }
+
+        private NetworkCommunicator GetNetworkPeerByID(string ID)
+        {
+            foreach (var np in GameNetwork.NetworkPeers)
+            {
+                if(np.VirtualPlayer.Id.ToString() == ID)
+                {
+                    return np;
+                }
+            }
+            return null;
+        }
+
+        public void SendServerMessageToPeer(string ID, string message)
+        {
+            NetworkCommunicator peer = GetNetworkPeerByID(ID);
+            if(peer != null)
+            {
+                SendServerMessageToPeer(peer, message);
+            }
+        }
     }
 }
