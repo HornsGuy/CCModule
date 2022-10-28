@@ -2,6 +2,7 @@
 using NetworkMessages.FromServer;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
@@ -83,6 +84,11 @@ namespace CCModuleServerOnly
                         GameNetwork.BeginBroadcastModuleEvent();
                         GameNetwork.WriteMessage((GameNetworkMessage)new UpdateSelectedTroopIndex(netPeer, 0));
                         GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.ExcludeOtherTeamPlayers, netPeer);
+
+                        AgentBuildData abd = AdminPanel.Instance.GetAgentBuildDataForPlayer(netPeer).Item1;
+                        GameNetwork.BeginModuleEventAsServer(netPeer);
+                        GameNetwork.WriteMessage((GameNetworkMessage)new CreateAgentVisuals(netPeer, abd, mp.SelectedTroopIndex, 0));
+                        GameNetwork.EndModuleEventAsServer();
                     }
                 }
             }

@@ -614,7 +614,7 @@ namespace CCModuleServerOnly
             return agentBuildData2.AgentBodyProperties;
         }
 
-        protected Tuple<AgentBuildData, int> GetAgentBuildDataForPlayer(NetworkCommunicator networkPeer)
+        public Tuple<AgentBuildData, int> GetAgentBuildDataForPlayer(NetworkCommunicator networkPeer)
         {
             BasicCultureObject cultureLimit1 = MBObjectManager.Instance.GetObject<BasicCultureObject>(MultiplayerOptions.OptionType.CultureTeam1.GetStrValue(MultiplayerOptions.MultiplayerOptionsAccessMode.CurrentMapOptions));
             BasicCultureObject cultureLimit2 = MBObjectManager.Instance.GetObject<BasicCultureObject>(MultiplayerOptions.OptionType.CultureTeam2.GetStrValue(MultiplayerOptions.MultiplayerOptionsAccessMode.CurrentMapOptions));
