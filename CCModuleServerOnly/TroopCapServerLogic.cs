@@ -53,7 +53,6 @@ namespace CCModuleServerOnly
             return toReturn;
         }
 
-
         public bool CheckIfPlayerTroopIndexIsUnderCap(MissionPeer playerPeer, int troopIndex)
         {
             Dictionary<string, int> troopTypePercent = new Dictionary<string, int>();
@@ -81,6 +80,9 @@ namespace CCModuleServerOnly
                     if(!CheckIfPlayerTroopIndexIsUnderCap(mp, mp.SelectedTroopIndex))
                     {
                         mp.SelectedTroopIndex = 0;
+
+                        BannerlordWrapper.PlayerWrapper.Instance.SetTroopIndexForPlayer(netPeer.VirtualPlayer.Id.ToString(), 0);
+                        
                         GameNetwork.BeginBroadcastModuleEvent();
                         GameNetwork.WriteMessage((GameNetworkMessage)new UpdateSelectedTroopIndex(netPeer, 0));
                         GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.ExcludeOtherTeamPlayers, netPeer);

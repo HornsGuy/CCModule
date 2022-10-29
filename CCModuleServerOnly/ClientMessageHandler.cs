@@ -1,4 +1,5 @@
 ﻿
+using BannerlordWrapper;
 using CCModuleNetworkMessages.FromClient;
 using CCModuleNetworkMessages.FromServer;
 using NetworkMessages.FromClient;
@@ -10,6 +11,7 @@ using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.Network.Messages;
 using TaleWorlds.ObjectSystem;
+using static BannerlordWrapper.TeamWrapper;
 
 namespace CCModuleServerOnly
 {
@@ -40,6 +42,7 @@ namespace CCModuleServerOnly
             handlerRegisterer.Register<OpenAdminPanelMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<OpenAdminPanelMessage>(this.HandleOpenAdminPanelMessage));
             handlerRegisterer.Register<RequestMapsForGameType>(new GameNetworkMessage.ClientMessageHandlerDelegate<RequestMapsForGameType>(this.HandleRequestMapsForGameType));
             handlerRegisterer.Register<APStartMissionMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<APStartMissionMessage>(this.HandleAPStartMissionMessage));
+            handlerRegisterer.Register<TeamChange>(new GameNetworkMessage.ClientMessageHandlerDelegate<TeamChange>(this.HandleTeamChange));
         }
 
         private bool HandleEndWarmupMessage(NetworkCommunicator peer, APEndWarmupMessage message)
@@ -110,6 +113,7 @@ namespace CCModuleServerOnly
             if(missionPeer != null)
             {
                 missionPeer.SelectedTroopIndex = 0;
+                PlayerWrapper.Instance.SetTroopIndexForPlayer(peer.VirtualPlayer.Id.ToString(), 0);
                 GameNetwork.BeginBroadcastModuleEvent();
                 GameNetwork.WriteMessage((GameNetworkMessage)new UpdateSelectedTroopIndex(peer, missionPeer.SelectedTroopIndex));
                 GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.ExcludeOtherTeamPlayers, peer);
@@ -126,6 +130,11 @@ namespace CCModuleServerOnly
                 Thread t = new Thread(new ParameterizedThreadStart(SetSelectedTroopIndexThread));
                 t.Start(peer);
             }
+            else
+            {
+                PlayerWrapper.Instance.SetTroopIndexForPlayer(peer.VirtualPlayer.Id.ToString(), message.SelectedTroopIndex);
+            }
+
             return true;
         }
         
@@ -168,6 +177,25 @@ namespace CCModuleServerOnly
                 {
                     AdminPanel.Instance.SendServerMessageToPeer(peer, "Mission is already being changed.");
                 }
+            }
+
+            return true;
+        }
+        
+        private bool HandleTeamChange(NetworkCommunicator peer, TeamChange message)
+        {
+            if(message.Team != null)
+            {
+                TeamType teamType = TeamType.Spectator;
+                if (message.Team.Side == BattleSideEnum.Attacker)
+                {
+                    teamType = TeamType.Attacker;
+                }
+                else if(message.Team.Side == BattleSideEnum.Defender)
+                {
+                    teamType = TeamType.Defender;
+                }
+                PlayerWrapper.Instance.SetPlayerTeam(peer.VirtualPlayer.Id.ToString(), teamType);
             }
 
             return true;

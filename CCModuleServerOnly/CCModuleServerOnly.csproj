@@ -105,6 +105,7 @@
   <ItemGroup>
     <Compile Include="AdminPanel.cs" />
     <Compile Include="AdminPanelServerData.cs" />
+    <Compile Include="Wrappers\BannerlordWrapperGameHandler.cs" />
     <Compile Include="ClientMessageHandler.cs" />
     <Compile Include="CCModuleGameHandler.cs" />
     <Compile Include="CCModuleServerOnlySubModule.cs" />
@@ -125,6 +126,10 @@
     <Compile Include="TroopCapServerLogic.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BannerlordWrapper\BannerlordWrapper.csproj">
+      <Project>{19cbb9e4-1d30-43c5-bcf6-02a6210584c7}</Project>
+      <Name>BannerlordWrapper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ClientServerShared\ClientServerShared.csproj">
       <Project>{a0f4aa55-81c9-424a-ba82-f3106dd46dbe}</Project>
       <Name>ClientServerShared</Name>
