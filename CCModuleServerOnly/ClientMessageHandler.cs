@@ -124,8 +124,7 @@ namespace CCModuleServerOnly
         {
             // Get what type of troop the peer is changing to and see if they are exceeding the troop cap
             // This is just in case of a hacked client
-            MissionPeer missionPeer = peer.GetComponent<MissionPeer>();
-            if (!TroopCapServerLogic.Instance.CheckIfPlayerTroopIndexIsUnderCap(missionPeer,message.SelectedTroopIndex))
+            if (!TroopCapServerLogic.Instance.CheckIfPlayerTroopIndexIsUnderCap(peer.VirtualPlayer.Id.ToString(), message.SelectedTroopIndex))
             {
                 Thread t = new Thread(new ParameterizedThreadStart(SetSelectedTroopIndexThread));
                 t.Start(peer);

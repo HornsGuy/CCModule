@@ -60,5 +60,11 @@
     <Compile Include="TroopCapLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BannerlordWrapper\BannerlordWrapper.csproj">
+      <Project>{19cbb9e4-1d30-43c5-bcf6-02a6210584c7}</Project>
+      <Name>BannerlordWrapper</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -111,7 +111,7 @@ namespace BannerlordWrapperNUnit
         public void TroopCapAttackerParameterizedTests(int troopIndex, int troopCap, bool expected)
         {
             Player testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, troopIndex);
-            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, troopCap), Is.EqualTo(expected));
+            Assert.That(TroopCapLogic.TroopUnderCapForTeam(testPlayer.Team, troopIndex, troopCap), Is.EqualTo(expected));
         }
 
         [Test]
@@ -138,7 +138,7 @@ namespace BannerlordWrapperNUnit
         public void TroopCapDefenderParameterizedTests(int troopIndex, int troopCap, bool expected)
         {
             Player testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Defender, troopIndex);
-            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, troopCap), Is.EqualTo(expected));
+            Assert.That(TroopCapLogic.TroopUnderCapForTeam(testPlayer.Team, troopIndex, troopCap), Is.EqualTo(expected));
         }
     }
 
@@ -193,7 +193,7 @@ namespace BannerlordWrapperNUnit
         public void TroopCapAttackerParameterizedTests(int troopIndex, int troopCap, bool expected)
         {
             Player testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, troopIndex);
-            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, troopCap), Is.EqualTo(expected));
+            Assert.That(TroopCapLogic.TroopUnderCapForTeam(testPlayer.Team, troopIndex, troopCap), Is.EqualTo(expected));
         }
 
         [Test]
@@ -216,7 +216,7 @@ namespace BannerlordWrapperNUnit
         public void TroopCapDefenderParameterizedTests(int troopIndex, int troopCap, bool expected)
         {
             Player testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Defender, troopIndex);
-            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, troopCap), Is.EqualTo(expected));
+            Assert.That(TroopCapLogic.TroopUnderCapForTeam(testPlayer.Team, troopIndex, troopCap), Is.EqualTo(expected));
         }
     }
 
@@ -231,19 +231,19 @@ namespace BannerlordWrapperNUnit
 
             // Infantry makes up 100% of attackes, make sure players can spawn as inf
             Player testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, AttackerInfIndex);
-            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, 100), Is.EqualTo(true));
+            Assert.That(TroopCapLogic.TroopUnderCapForTeam(testPlayer.Team, testPlayer.Troop.TroopIndex, 100), Is.EqualTo(true));
 
             // Ranged is 0% of attackers, make sure players can't spawn as range
             testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, AttackerRangeIndex);
-            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, 0), Is.EqualTo(false));
+            Assert.That(TroopCapLogic.TroopUnderCapForTeam(testPlayer.Team, testPlayer.Troop.TroopIndex, 0), Is.EqualTo(false));
 
             // Ranged is 0% of attackers, make sure players can't spawn as range
             testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, AttackerCavIndex);
-            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, 0), Is.EqualTo(false));
+            Assert.That(TroopCapLogic.TroopUnderCapForTeam(testPlayer.Team, testPlayer.Troop.TroopIndex, 0), Is.EqualTo(false));
 
             // Ranged is 0% of attackers, make sure players can't spawn as range
             testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, AttackerHAIndex);
-            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, 0), Is.EqualTo(false));
+            Assert.That(TroopCapLogic.TroopUnderCapForTeam(testPlayer.Team, testPlayer.Troop.TroopIndex, 0), Is.EqualTo(false));
 
         }
 
@@ -256,19 +256,19 @@ namespace BannerlordWrapperNUnit
 
             // Infantry makes up 100% of attackes, make sure players can spawn as inf
             Player testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, AttackerInfIndex);
-            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, 100), Is.EqualTo(true));
+            Assert.That(TroopCapLogic.TroopUnderCapForTeam(testPlayer.Team, testPlayer.Troop.TroopIndex, 100), Is.EqualTo(true));
 
             // Ranged is 0% of attackers, make sure players can't spawn as range
             testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, AttackerRangeIndex);
-            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, 0), Is.EqualTo(false));
+            Assert.That(TroopCapLogic.TroopUnderCapForTeam(testPlayer.Team, testPlayer.Troop.TroopIndex, 0), Is.EqualTo(false));
 
             // Ranged is 0% of attackers, make sure players can't spawn as range
             testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, AttackerCavIndex);
-            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, 0), Is.EqualTo(false));
+            Assert.That(TroopCapLogic.TroopUnderCapForTeam(testPlayer.Team, testPlayer.Troop.TroopIndex, 0), Is.EqualTo(false));
 
             // Ranged is 0% of attackers, make sure players can't spawn as range
             testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, AttackerHAIndex);
-            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, 0), Is.EqualTo(false));
+            Assert.That(TroopCapLogic.TroopUnderCapForTeam(testPlayer.Team, testPlayer.Troop.TroopIndex, 0), Is.EqualTo(false));
         }
     }
 }

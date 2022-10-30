@@ -9,20 +9,21 @@ namespace BannerlordWrapper
 
     public static class TroopCapLogic
     {
-        public static bool PlayerCanSpawn(Player player, int troopCapForPlayersTroopType)
+
+        public static bool TroopUnderCapForTeam(Team team, int troopIndex, int troopCapForPlayersTroopType)
         {
-            if(troopCapForPlayersTroopType == 0 || player.Team.TeamType == TeamType.Spectator)
+            if (troopCapForPlayersTroopType == 0 || team.TeamType == TeamType.Spectator)
             {
                 return false;
             }
-            else if(troopCapForPlayersTroopType == 100 )
+            else if (troopCapForPlayersTroopType == 100)
             {
                 return true;
             }
 
-            Dictionary<TroopType, double> currentTroopBreakdown = PlayerWrapper.Instance.GetTroopTypeBreakdownForTeam(player.Team);
+            Dictionary<TroopType, double> currentTroopBreakdown = PlayerWrapper.Instance.GetTroopTypeBreakdownForTeam(team);
 
-            return currentTroopBreakdown[player.Troop.TroopType] <= troopCapForPlayersTroopType;
+            return currentTroopBreakdown[team.GetTroopType(troopIndex)] <= troopCapForPlayersTroopType;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BannerlordWrapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,13 @@ namespace ClientServerShared
 {
     public class AdminPanelData
     {
+
+        public int InfantryCap { get; private set; }
+        public int RangedCap { get; private set; }
+        public int CavalryCap { get; private set; }
+        public int HorseArcherCap { get; private set; }
+
+        public List<string> AvailableMaps { get; private set; } = new List<string>();
 
         public delegate void OnTroopCapsUpdatedEvent();
         public event OnTroopCapsUpdatedEvent OnTroopCapsUpdated;
@@ -56,11 +64,27 @@ namespace ClientServerShared
             return InfantryCap != 100 || RangedCap != 100 || CavalryCap != 100 || HorseArcherCap != 100;
         }
 
-        public int InfantryCap { get; private set; }
-        public int RangedCap { get; private set; }
-        public int CavalryCap { get; private set; }
-        public int HorseArcherCap { get; private set; }
+        public int GetTroopCapForTroopType(TroopType troopType)
+        {
+            if(troopType == TroopType.Infantry)
+            {
+                return InfantryCap;
+            }
+            else if (troopType == TroopType.Ranged)
+            {
+                return RangedCap;
+            }
+            else if (troopType == TroopType.Cavalry)
+            {
+                return CavalryCap;
+            }
+            else if (troopType == TroopType.HorseArcher)
+            {
+                return HorseArcherCap;
+            }
 
-        public List<string> AvailableMaps { get; private set; } = new List<string>();
+            return 100; // If the troop is undefined, we just let them spawn
+        }
+
     }
 }
