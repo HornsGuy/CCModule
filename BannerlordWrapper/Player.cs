@@ -10,18 +10,26 @@ namespace BannerlordWrapper
 {
     public class Player
     {
+       
         public string ID { get; private set; }
         public string Name { get; private set; }
         public Team Team { get; private set; }
-        public int SelectedTroopIndex { get; private set; }
+        public Troop Troop { get; private set; }
 
 
-        public Player(string iD, string name, TeamType teamType, int selectedTroopIndex=0)
+        public Player(string iD, string name, TeamType teamType)
         {
             ID = iD;
             Name = name;
             Team = TeamWrapper.Instance.GetTeamFromType(teamType);
-            SelectedTroopIndex = selectedTroopIndex;
+        }
+
+        public Player(string iD, string name, TeamType teamType, int troopIndex)
+        {
+            ID = iD;
+            Name = name;
+            Team = TeamWrapper.Instance.GetTeamFromType(teamType);
+            ChangeSelectedTroopIndex(troopIndex);
         }
 
         public void ChangeTeam(TeamType teamType)
@@ -32,8 +40,16 @@ namespace BannerlordWrapper
 
         public void ChangeSelectedTroopIndex(int newTroop)
         {
-            Logging.Instance.Debug($"{this} troop to {newTroop}:{Team.GetTroopName(newTroop)}");
-            SelectedTroopIndex = newTroop;
+            if(Team.HasTroop(newTroop))
+            {
+                Logging.Instance.Debug($"Changing {this} troop to {newTroop}");
+                Troop = Team.GetTroop(newTroop);
+            }
+            else
+            {
+                Logging.Instance.Error($"Index {newTroop} does not exist for Team {Team}. Defaulting to 0");
+                Troop = Team.GetTroop(0);
+            }
         }
 
         public override string ToString()

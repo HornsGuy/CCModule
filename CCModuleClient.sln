@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientServerSharedTests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BannerlordWrapper", "BannerlordWrapper\BannerlordWrapper.csproj", "{19CBB9E4-1D30-43C5-BCF6-02A6210584C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BannerlordWrapperNUnit", "BannerlordWrapperNUnit\BannerlordWrapperNUnit.csproj", "{3498ADAB-338F-425C-B7F1-EB4296687419}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,14 @@ Global
 		{19CBB9E4-1D30-43C5-BCF6-02A6210584C7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{19CBB9E4-1D30-43C5-BCF6-02A6210584C7}.Release|x64.ActiveCfg = Release|Any CPU
 		{19CBB9E4-1D30-43C5-BCF6-02A6210584C7}.Release|x64.Build.0 = Release|Any CPU
+		{3498ADAB-338F-425C-B7F1-EB4296687419}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3498ADAB-338F-425C-B7F1-EB4296687419}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3498ADAB-338F-425C-B7F1-EB4296687419}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3498ADAB-338F-425C-B7F1-EB4296687419}.Debug|x64.Build.0 = Debug|Any CPU
+		{3498ADAB-338F-425C-B7F1-EB4296687419}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3498ADAB-338F-425C-B7F1-EB4296687419}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3498ADAB-338F-425C-B7F1-EB4296687419}.Release|x64.ActiveCfg = Release|Any CPU
+		{3498ADAB-338F-425C-B7F1-EB4296687419}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

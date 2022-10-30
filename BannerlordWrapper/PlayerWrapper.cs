@@ -24,7 +24,6 @@ namespace BannerlordWrapper
         }
 
         Dictionary<string, Player> _players = new Dictionary<string, Player>();
-        
 
         public PlayerWrapper()
         {
@@ -43,6 +42,10 @@ namespace BannerlordWrapper
                 _players.Add(p.ID, p);
                 Logging.Instance.Info($"{p} has joined the server");
                 return true;
+            }
+            else
+            {
+                Logging.Instance.Error($"Player with same ID already exists {p}");
             }
             return false;
         }
@@ -86,19 +89,51 @@ namespace BannerlordWrapper
             }
         }
 
-        public List<int> GetTroopIndecesForTeam(TeamWrapper.TeamType team)
+        public List<TroopType> GetTroopTypesForTeam(Team team)
         {
-            List<int> indeces = new List<int>();
+            List<TroopType> troops = new List<TroopType>();
 
             foreach (var player in _players.Values)
             {
-                if(team == player.Team.TeamType)
+                if(team.TeamType == player.Team.TeamType)
                 {
-                    indeces.Add(player.SelectedTroopIndex);
+                    troops.Add(player.Troop.TroopType);
                 }
             }
 
-            return indeces;
+            return troops;
         }
+
+        public Dictionary<TroopType, double> GetTroopTypeBreakdownForTeam(Team team)
+        {
+            Dictionary<TroopType, double> toReturn = new Dictionary<TroopType, double>();
+            List<TroopType> troopTypes = GetTroopTypesForTeam(team);
+
+            Dictionary<TroopType, double> troopTypeCount = new Dictionary<TroopType, double>();
+
+            // Get the count of each type of troop
+            foreach (var troopType in troopTypes)
+            { 
+                if(troopTypeCount.ContainsKey(troopType))
+                {
+
+                    troopTypeCount[troopType]++;
+                }
+                else
+                {
+                    troopTypeCount.Add(troopType, 1);
+                }
+            }
+
+            // Calculate the percentage
+            float total = troopTypes.Count;
+            foreach (var count in troopTypeCount)
+            {
+                toReturn[count.Key] = (count.Value / total) * 100.0;
+            }
+
+            return toReturn;
+        }
+
     }
 }
