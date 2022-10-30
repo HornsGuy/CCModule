@@ -15,7 +15,7 @@ namespace CCModuleServerOnly.Wrappers
     {
         protected override void OnPlayerConnect(VirtualPlayer peer)
         {
-            PlayerWrapper.Instance.AddPlayer(new BannerlordWrapper.Player(peer.Id.ToString(), peer.UserName, TeamWrapper.TeamType.Spectator));
+            PlayerWrapper.Instance.AddPlayer(new BannerlordWrapper.Player(peer.Id.ToString(), peer.UserName, TeamType.Spectator));
         }
 
         protected override void OnPlayerDisconnect(VirtualPlayer peer)

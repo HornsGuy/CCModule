@@ -62,6 +62,11 @@ namespace BannerlordWrapper
             return IndexToTroop.ContainsKey(troopIndex);
         }
 
+        public bool IsSpectator()
+        {
+            return TeamType == TeamType.Spectator;
+        }
+
         public override string ToString()
         {
             return $"{TeamType}:{Faction}";

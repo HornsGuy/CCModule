@@ -14,6 +14,13 @@ namespace BannerlordWrapperNUnit
         public const int DefenderRangeIndex = 3;
         public const int DefenderCavIndex = 5;
 
+        [TearDown]
+        public void TearDown()
+        {
+            idCount = 0;
+            TeamWrapper.Instance.Reset();
+            PlayerWrapper.Instance.Reset();
+        }
 
         public void AddPlayersToTeam(TeamType team, int numToAdd, int troopIndex)
         {
@@ -73,13 +80,7 @@ namespace BannerlordWrapperNUnit
             AddPlayersToTeam(TeamType.Defender, 20, 5); // Cav
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            idCount = 0;
-            TeamWrapper.Instance.Reset();
-            PlayerWrapper.Instance.Reset();
-        }
+        
 
         [Test]
         // All 100
@@ -168,14 +169,6 @@ namespace BannerlordWrapperNUnit
             AddPlayersToTeam(TeamType.Defender, 10, 6); // Cav
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            idCount = 0;
-            TeamWrapper.Instance.Reset();
-            PlayerWrapper.Instance.Reset();
-        }
-
         [Test]
         // All 100
         [TestCase(AttackerInfIndex, 100, true)]
@@ -252,6 +245,30 @@ namespace BannerlordWrapperNUnit
             testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, AttackerHAIndex);
             Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, 0), Is.EqualTo(false));
 
+        }
+
+        [Test]
+        public void HundredSpectatorsHundredAttackers()
+        {
+            AddTestTeams();
+            AddPlayersToTeam(TeamType.Spectator, 100, 0);
+            AddPlayersToTeam(TeamType.Attacker, 100, AttackerInfIndex);
+
+            // Infantry makes up 100% of attackes, make sure players can spawn as inf
+            Player testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, AttackerInfIndex);
+            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, 100), Is.EqualTo(true));
+
+            // Ranged is 0% of attackers, make sure players can't spawn as range
+            testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, AttackerRangeIndex);
+            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, 0), Is.EqualTo(false));
+
+            // Ranged is 0% of attackers, make sure players can't spawn as range
+            testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, AttackerCavIndex);
+            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, 0), Is.EqualTo(false));
+
+            // Ranged is 0% of attackers, make sure players can't spawn as range
+            testPlayer = new Player(idCount++.ToString(), "TestPlayer", TeamType.Attacker, AttackerHAIndex);
+            Assert.That(TroopCapLogic.PlayerCanSpawn(testPlayer, 0), Is.EqualTo(false));
         }
     }
 }

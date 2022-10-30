@@ -40,15 +40,18 @@ namespace BannerlordWrapper
 
         public void ChangeSelectedTroopIndex(int newTroop)
         {
-            if(Team.HasTroop(newTroop))
+            if(!Team.IsSpectator())
             {
-                Logging.Instance.Debug($"Changing {this} troop to {newTroop}");
-                Troop = Team.GetTroop(newTroop);
-            }
-            else
-            {
-                Logging.Instance.Error($"Index {newTroop} does not exist for Team {Team}. Defaulting to 0");
-                Troop = Team.GetTroop(0);
+                if (Team.HasTroop(newTroop))
+                {
+                    Logging.Instance.Debug($"Changing {this} troop to {newTroop}");
+                    Troop = Team.GetTroop(newTroop);
+                }
+                else
+                {
+                    Logging.Instance.Error($"Index {newTroop} does not exist for Team {Team}. Defaulting to 0");
+                    Troop = Team.GetTroop(0);
+                }
             }
         }
 
