@@ -43,6 +43,9 @@ namespace CCModuleServerOnly
             handlerRegisterer.Register<RequestMapsForGameType>(new GameNetworkMessage.ClientMessageHandlerDelegate<RequestMapsForGameType>(this.HandleRequestMapsForGameType));
             handlerRegisterer.Register<APStartMissionMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<APStartMissionMessage>(this.HandleAPStartMissionMessage));
             handlerRegisterer.Register<TeamChange>(new GameNetworkMessage.ClientMessageHandlerDelegate<TeamChange>(this.HandleTeamChange));
+            handlerRegisterer.Register<AgentSpawnedMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<AgentSpawnedMessage>(this.HandleAgentSpawnedMessage));
+            handlerRegisterer.Register<ReEquipInitialWeapons>(new GameNetworkMessage.ClientMessageHandlerDelegate<ReEquipInitialWeapons>(this.HandleReEquipInitialWeapons));
+
         }
 
         private bool HandleEndWarmupMessage(NetworkCommunicator peer, APEndWarmupMessage message)
@@ -195,6 +198,53 @@ namespace CCModuleServerOnly
                     teamType = TeamType.Defender;
                 }
                 PlayerWrapper.Instance.SetPlayerTeam(peer.VirtualPlayer.Id.ToString(), teamType);
+            }
+
+            return true;
+        }
+        
+        private bool HandleAgentSpawnedMessage(NetworkCommunicator peer, AgentSpawnedMessage message)
+        {
+            if(message.peer.VirtualPlayer != null && EquipmentOverride.Instance.PlayerHasEquipmentToBeOverridden(message.peer.VirtualPlayer.Id.ToString()))
+            {
+                
+                Equipment newEquipment = EquipmentOverride.Instance.GetOverriddenEquipment(message.peer.VirtualPlayer.Id.ToString(), message.peer.ControlledAgent);
+                GameNetwork.BeginModuleEventAsServer(peer);
+                GameNetwork.WriteMessage(new ChangePlayerCosmeticEquipment(message.peer, newEquipment));
+                GameNetwork.EndModuleEventAsServer();
+
+            }
+
+            return true;
+        }
+        
+        void ThreadProc(object peer)
+        {
+            
+            NetworkCommunicator netPeer = (NetworkCommunicator)peer;
+            if(netPeer != null && netPeer.ControlledAgent != null)
+            {
+                if (netPeer.ControlledAgent.WieldedWeapon.Item != null)
+                {
+                    netPeer.ControlledAgent.TryToSheathWeaponInHand(Agent.HandIndex.MainHand, Agent.WeaponWieldActionType.WithAnimation);
+                    Debug.Print("Main Hand", 0, Debug.DebugColor.Purple);
+                }
+                Thread.Sleep(500);
+                if(netPeer.ControlledAgent.WieldedOffhandWeapon.Item != null)
+                {
+                    netPeer.ControlledAgent.TryToSheathWeaponInHand(Agent.HandIndex.OffHand, Agent.WeaponWieldActionType.WithAnimation);
+                    Debug.Print("Off Hand", 0, Debug.DebugColor.Purple);
+                }
+                
+            }
+        }
+
+        private bool HandleReEquipInitialWeapons(NetworkCommunicator peer, ReEquipInitialWeapons message)
+        {
+            if(peer.ControlledAgent != null)
+            {
+                Thread t = new Thread(new ParameterizedThreadStart(ThreadProc));
+                t.Start(peer);
             }
 
             return true;

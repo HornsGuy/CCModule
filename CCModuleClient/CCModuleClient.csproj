@@ -113,10 +113,13 @@
     <Compile Include="AdminPanelClientData.cs" />
     <Compile Include="CCModuleClientSubModule.cs" />
     <Compile Include="ChatMessageManager.cs" />
+    <Compile Include="FromClient\AgentSpawnedMessage.cs" />
     <Compile Include="FromClient\APStartMissionMessage.cs" />
     <Compile Include="FromClient\APUpdateTroopCapMessage.cs" />
     <Compile Include="FromClient\OpenAdminPanelMessage.cs" />
+    <Compile Include="FromClient\ReEquipInitialWeapons.cs" />
     <Compile Include="FromClient\RequestMapsForGameType.cs" />
+    <Compile Include="FromServer\ChangePlayerCosmeticEquipment.cs" />
     <Compile Include="FromServer\ReturnMapsForGameTypeMessage.cs" />
     <Compile Include="FromServer\ColoredChatMessage.cs" />
     <Compile Include="FromServer\SyncAdminPanelMessage.cs" />

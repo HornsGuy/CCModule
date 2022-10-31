@@ -46,7 +46,7 @@ namespace CCModuleServerOnly
         public override void OnMissionBehaviorInitialize(Mission mission)
         {
             base.OnMissionBehaviorInitialize(mission);
-            mission.AddMissionBehavior(new EquipmentOverrideMissionBehavior());
+            EquipmentOverride.Instance.Setup();
             BannerlordWrapperGameHandler.MissionStartUpdateWrappers();
         }
 

@@ -1,9 +1,11 @@
 ﻿using CCModuleNetworkMessages.FromClient;
 using CCModuleNetworkMessages.FromServer;
+using NetworkMessages.FromServer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
@@ -41,6 +43,8 @@ namespace CCModuleClient
             handlerRegisterer.Register<SyncAdminPanelMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<SyncAdminPanelMessage>(this.HandleSyncAdminPanelMessage));
             handlerRegisterer.Register<ReturnMapsForGameTypeMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<ReturnMapsForGameTypeMessage>(this.HandleReturnMapsForGameTypeMessage));
             handlerRegisterer.Register<ColoredChatMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<ColoredChatMessage>(this.HandleColoredChatMessage));
+            handlerRegisterer.Register<CreateAgent>(new GameNetworkMessage.ServerMessageHandlerDelegate<CreateAgent>(this.HandleCreateAgent));
+            handlerRegisterer.Register<ChangePlayerCosmeticEquipment>(new GameNetworkMessage.ServerMessageHandlerDelegate<ChangePlayerCosmeticEquipment>(this.HandleChangePlayerCosmeticEquipment));
         }
 
         private void HandleAdminLoginMessage(AdminLoginMessage message)
@@ -88,6 +92,30 @@ namespace CCModuleClient
                 ChatMessageManager.AddMessage(line, message.Red, message.Green, message.Blue);
             }
             
+        }
+        
+        private void HandleCreateAgent(CreateAgent message)
+        {
+            GameNetwork.BeginModuleEventAsClient();
+            GameNetwork.WriteMessage(new AgentSpawnedMessage(message.Peer));
+            GameNetwork.EndModuleEventAsClient();
+        }
+        
+        private void HandleChangePlayerCosmeticEquipment(ChangePlayerCosmeticEquipment message)
+        {
+            NetworkCommunicator peerToUpdateEquipment = message.Peer;
+            if(peerToUpdateEquipment != null && peerToUpdateEquipment.ControlledAgent != null && message.Equipment != null)
+            {
+                Equipment newEquipment = message.Equipment;
+                peerToUpdateEquipment.ControlledAgent.UpdateSpawnEquipmentAndRefreshVisuals(newEquipment);
+
+                if(peerToUpdateEquipment == GameNetwork.MyPeer)
+                {
+                    GameNetwork.BeginModuleEventAsClient();
+                    GameNetwork.WriteMessage(new ReEquipInitialWeapons());
+                    GameNetwork.EndModuleEventAsClient();
+                }
+            }
         }
 
         public override void OnAfterSave()

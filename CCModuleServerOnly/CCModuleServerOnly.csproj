@@ -105,6 +105,9 @@
   <ItemGroup>
     <Compile Include="AdminPanel.cs" />
     <Compile Include="AdminPanelServerData.cs" />
+    <Compile Include="FromClient\AgentSpawnedMessage.cs" />
+    <Compile Include="FromClient\ReEquipInitialWeapons.cs" />
+    <Compile Include="FromServer\ChangePlayerCosmeticEquipment.cs" />
     <Compile Include="Wrappers\BannerlordWrapperGameHandler.cs" />
     <Compile Include="ClientMessageHandler.cs" />
     <Compile Include="CCModuleGameHandler.cs" />
