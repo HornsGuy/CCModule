@@ -51,7 +51,7 @@ namespace CCModuleServerOnly
                 foreach (var ed in equipmentOverrides)
                 {
                     Debug.Print("Override found for " + ed.name, 0, Debug.DebugColor.Yellow);
-                    if (ed.ID != "ID Goes Here")
+                    if (ed.ID != "Player ID Goes Here")
                     {
                         equipmentToOverride.Add(ed.ID, ConvertEquipmentFromFile(ed.equipmentToOverride));
                     }
@@ -120,7 +120,7 @@ namespace CCModuleServerOnly
         public Equipment GetOverriddenEquipment(string ID, Agent agent)
         {
             Equipment newEquipment = agent.SpawnEquipment;
-
+            
             if(agent == null)
             {
                 return newEquipment;

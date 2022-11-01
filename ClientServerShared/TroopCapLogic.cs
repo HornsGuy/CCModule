@@ -58,7 +58,7 @@ namespace ClientServerShared
                 }
                 else if(currentTroopBreakdown.ContainsKey(keyVal.Key))
                 {
-                    isAvailable = currentTroopBreakdown[keyVal.Key] < keyVal.Value;
+                    isAvailable = currentTroopBreakdown[keyVal.Key] <= keyVal.Value;
                 }
                 
                 toReturn.Add(keyVal.Key, isAvailable);
