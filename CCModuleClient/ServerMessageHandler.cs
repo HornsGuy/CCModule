@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TaleWorlds.Core;
+using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.Network.Messages;
 using TaleWorlds.ObjectSystem;
@@ -100,16 +101,30 @@ namespace CCModuleClient
             GameNetwork.WriteMessage(new AgentSpawnedMessage(message.Peer));
             GameNetwork.EndModuleEventAsClient();
         }
-        
+
         private void HandleChangePlayerCosmeticEquipment(ChangePlayerCosmeticEquipment message)
         {
             NetworkCommunicator peerToUpdateEquipment = message.Peer;
             if(peerToUpdateEquipment != null && peerToUpdateEquipment.ControlledAgent != null && message.Equipment != null)
             {
                 Equipment newEquipment = message.Equipment;
-                peerToUpdateEquipment.ControlledAgent.UpdateSpawnEquipmentAndRefreshVisuals(newEquipment);
+                MissionEquipment me = peerToUpdateEquipment.ControlledAgent.Equipment;
 
-                if(peerToUpdateEquipment == GameNetwork.MyPeer)
+                // Decompiled UpdateSpawnEquipmentAndRefreshVisuals with tweaks
+                peerToUpdateEquipment.ControlledAgent.InitializeSpawnEquipment(newEquipment);
+                peerToUpdateEquipment.ControlledAgent.AgentVisuals.ClearVisualComponents(false);
+                peerToUpdateEquipment.ControlledAgent.Mission.OnEquipItemsFromSpawnEquipment(peerToUpdateEquipment.ControlledAgent, Agent.CreationType.FromCharacterObj);
+                peerToUpdateEquipment.ControlledAgent.AgentVisuals.ClearAllWeaponMeshes();
+                // This is different
+                peerToUpdateEquipment.ControlledAgent.InitializeMissionEquipment(me, new Banner(message.Peer.VirtualPlayer.BannerCode));
+                // -----------------
+                peerToUpdateEquipment.ControlledAgent.CheckEquipmentForCapeClothSimulationStateChange();
+                peerToUpdateEquipment.ControlledAgent.EquipItemsFromSpawnEquipment(true);
+                peerToUpdateEquipment.ControlledAgent.UpdateAgentProperties();
+                peerToUpdateEquipment.ControlledAgent.WieldInitialWeapons();
+                peerToUpdateEquipment.ControlledAgent.PreloadForRendering();
+
+                if (peerToUpdateEquipment == GameNetwork.MyPeer)
                 {
                     GameNetwork.BeginModuleEventAsClient();
                     GameNetwork.WriteMessage(new ReEquipInitialWeapons());
