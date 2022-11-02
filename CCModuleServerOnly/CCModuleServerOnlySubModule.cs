@@ -13,6 +13,10 @@ using BannerlordWrapper;
 using CCModuleServerOnly.Wrappers;
 using TaleWorlds.ObjectSystem;
 using TaleWorlds.Localization;
+using HarmonyLib;
+using System.Reflection;
+using CCModuleServerOnly.HarmonyPatches;
+
 namespace CCModuleServerOnly
 {
     public class CCModuleServerOnlySubModule : MBSubModuleBase
@@ -28,6 +32,7 @@ namespace CCModuleServerOnly
             Debug.Print("Player Manager Loaded", 0, Debug.DebugColor.Magenta);
             PlayerManager.Instance.Setup();
             Logging.Instance.StartLogging("CCLogs", Logging.LogLevel.Debug);
+
         }
 
         protected override void InitializeGameStarter(Game game, IGameStarter starterObject)
@@ -48,6 +53,13 @@ namespace CCModuleServerOnly
             base.OnMissionBehaviorInitialize(mission);
             EquipmentOverride.Instance.Setup();
             BannerlordWrapperGameHandler.MissionStartUpdateWrappers();
+            Harmony.DEBUG = true;
+
+            var harmony = new Harmony("CCModule.SpawnEquipmentOverride");
+            // harmony.PatchAll(assembly);
+            var original = typeof(Mission).GetMethod("SpawnAgent", BindingFlags.Public | BindingFlags.Instance);
+            var prefix = typeof(PatchMission).GetMethod("Prefix");
+            harmony.Patch(original, prefix: new HarmonyMethod(prefix));
         }
 
     }

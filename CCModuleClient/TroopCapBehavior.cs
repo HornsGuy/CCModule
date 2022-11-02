@@ -74,18 +74,21 @@ namespace CCModuleClient
 
         public override void OnMissionTick(float dt)
         {
-            FieldInfo type = typeof(MissionGauntletClassLoadout).GetField("_dataSource", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            _vm = (MultiplayerClassLoadoutVM)type.GetValue(_loadoutMissionView);
-            if(_vm != null && !uiOpened)
+            if(_loadoutMissionView != null)
             {
-                OnClassLoadoutUIOpened();
-                uiOpened = true;
-            }
+                FieldInfo type = typeof(MissionGauntletClassLoadout).GetField("_dataSource", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                _vm = (MultiplayerClassLoadoutVM)type.GetValue(_loadoutMissionView);
+                if (_vm != null && !uiOpened)
+                {
+                    OnClassLoadoutUIOpened();
+                    uiOpened = true;
+                }
 
-            // Remove latch is UI closes
-            if(_vm == null && uiOpened)
-            {
-                uiOpened = false;
+                // Remove latch is UI closes
+                if (_vm == null && uiOpened)
+                {
+                    uiOpened = false;
+                }
             }
         }
 

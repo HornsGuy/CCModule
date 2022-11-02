@@ -49,6 +49,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\Servers\ChatCommands\Mount &amp; Blade II Dedicated Server\bin\Win64_Shipping_Server\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Dedicated Server\bin\Win64_Shipping_Server\Newtonsoft.Json.dll</HintPath>
@@ -108,6 +111,7 @@
     <Compile Include="FromClient\AgentSpawnedMessage.cs" />
     <Compile Include="FromClient\ReEquipInitialWeapons.cs" />
     <Compile Include="FromServer\ChangePlayerCosmeticEquipment.cs" />
+    <Compile Include="HarmonyPatches\PatchMission.cs" />
     <Compile Include="Wrappers\BannerlordWrapperGameHandler.cs" />
     <Compile Include="ClientMessageHandler.cs" />
     <Compile Include="CCModuleGameHandler.cs" />

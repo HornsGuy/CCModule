@@ -117,21 +117,16 @@ namespace CCModuleServerOnly
             return equipmentToOverride.ContainsKey(ID);
         }
 
-        public Equipment GetOverriddenEquipment(string ID, Agent agent)
+        public Equipment GetOverriddenEquipment(string ID, Equipment originalEquipment)
         {
-            Equipment newEquipment = agent.SpawnEquipment;
-            
-            if(agent == null)
-            {
-                return newEquipment;
-            }
+            Equipment newEquipment = originalEquipment;
 
             foreach (var itemToOverride in equipmentToOverride[ID])
             {
                 ItemObject item = MBObjectManager.Instance.GetObject<ItemObject>(itemToOverride.Item2);
                 if(item != null)
                 {
-                    EquipmentElement equipmentElement = agent.SpawnEquipment[itemToOverride.Item1];
+                    EquipmentElement equipmentElement = originalEquipment[itemToOverride.Item1];
                     equipmentElement.CosmeticItem = item;
                     newEquipment[itemToOverride.Item1] = equipmentElement;
                 }

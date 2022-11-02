@@ -44,8 +44,6 @@ namespace CCModuleClient
             handlerRegisterer.Register<SyncAdminPanelMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<SyncAdminPanelMessage>(this.HandleSyncAdminPanelMessage));
             handlerRegisterer.Register<ReturnMapsForGameTypeMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<ReturnMapsForGameTypeMessage>(this.HandleReturnMapsForGameTypeMessage));
             handlerRegisterer.Register<ColoredChatMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<ColoredChatMessage>(this.HandleColoredChatMessage));
-            handlerRegisterer.Register<CreateAgent>(new GameNetworkMessage.ServerMessageHandlerDelegate<CreateAgent>(this.HandleCreateAgent));
-            handlerRegisterer.Register<ChangePlayerCosmeticEquipment>(new GameNetworkMessage.ServerMessageHandlerDelegate<ChangePlayerCosmeticEquipment>(this.HandleChangePlayerCosmeticEquipment));
         }
 
         private void HandleAdminLoginMessage(AdminLoginMessage message)
@@ -91,45 +89,6 @@ namespace CCModuleClient
             foreach (var line in lines)
             {
                 ChatMessageManager.AddMessage(line, message.Red, message.Green, message.Blue);
-            }
-            
-        }
-        
-        private void HandleCreateAgent(CreateAgent message)
-        {
-            GameNetwork.BeginModuleEventAsClient();
-            GameNetwork.WriteMessage(new AgentSpawnedMessage(message.Peer));
-            GameNetwork.EndModuleEventAsClient();
-        }
-
-        private void HandleChangePlayerCosmeticEquipment(ChangePlayerCosmeticEquipment message)
-        {
-            NetworkCommunicator peerToUpdateEquipment = message.Peer;
-            if(peerToUpdateEquipment != null && peerToUpdateEquipment.ControlledAgent != null && message.Equipment != null)
-            {
-                Equipment newEquipment = message.Equipment;
-                MissionEquipment me = peerToUpdateEquipment.ControlledAgent.Equipment;
-
-                // Decompiled UpdateSpawnEquipmentAndRefreshVisuals with tweaks
-                peerToUpdateEquipment.ControlledAgent.InitializeSpawnEquipment(newEquipment);
-                peerToUpdateEquipment.ControlledAgent.AgentVisuals.ClearVisualComponents(false);
-                peerToUpdateEquipment.ControlledAgent.Mission.OnEquipItemsFromSpawnEquipment(peerToUpdateEquipment.ControlledAgent, Agent.CreationType.FromCharacterObj);
-                peerToUpdateEquipment.ControlledAgent.AgentVisuals.ClearAllWeaponMeshes();
-                // This is different
-                peerToUpdateEquipment.ControlledAgent.InitializeMissionEquipment(me, new Banner(message.Peer.VirtualPlayer.BannerCode));
-                // -----------------
-                peerToUpdateEquipment.ControlledAgent.CheckEquipmentForCapeClothSimulationStateChange();
-                peerToUpdateEquipment.ControlledAgent.EquipItemsFromSpawnEquipment(true);
-                peerToUpdateEquipment.ControlledAgent.UpdateAgentProperties();
-                peerToUpdateEquipment.ControlledAgent.WieldInitialWeapons();
-                peerToUpdateEquipment.ControlledAgent.PreloadForRendering();
-
-                if (peerToUpdateEquipment == GameNetwork.MyPeer)
-                {
-                    GameNetwork.BeginModuleEventAsClient();
-                    GameNetwork.WriteMessage(new ReEquipInitialWeapons());
-                    GameNetwork.EndModuleEventAsClient();
-                }
             }
         }
 
