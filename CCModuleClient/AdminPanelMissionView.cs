@@ -305,6 +305,7 @@ namespace CCModuleClient
                                                             Faction1.SelectedItem.StringItem,
                                                             Faction2.SelectedItem.StringItem));
             GameNetwork.EndModuleEventAsClient();
+            cancelPressed = true;
         }
         
         private async void ExecuteCancel()

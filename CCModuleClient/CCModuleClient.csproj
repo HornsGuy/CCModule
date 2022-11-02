@@ -124,12 +124,12 @@
     <Compile Include="FromServer\ColoredChatMessage.cs" />
     <Compile Include="FromServer\SyncAdminPanelMessage.cs" />
     <Compile Include="FromServer\TroopCapServerMessage.cs" />
-    <Compile Include="TroopCapBehavior.cs" />
     <Compile Include="FromClient\APEndWarmupMessage.cs" />
     <Compile Include="FromClient\ClientListeningMessage.cs" />
     <Compile Include="FromServer\AdminLoginMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerMessageHandler.cs" />
+    <Compile Include="ServerMessageView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClientServerShared\ClientServerShared.csproj">

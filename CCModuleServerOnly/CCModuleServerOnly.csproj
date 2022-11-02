@@ -112,6 +112,7 @@
     <Compile Include="FromClient\ReEquipInitialWeapons.cs" />
     <Compile Include="FromServer\ChangePlayerCosmeticEquipment.cs" />
     <Compile Include="HarmonyPatches\PatchMission.cs" />
+    <Compile Include="HarmonyPatches\PatchMissionLobbyEquipmentNetworkComponent.cs" />
     <Compile Include="Wrappers\BannerlordWrapperGameHandler.cs" />
     <Compile Include="ClientMessageHandler.cs" />
     <Compile Include="CCModuleGameHandler.cs" />

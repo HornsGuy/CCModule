@@ -50,7 +50,6 @@ namespace CCModuleClient
         {
             base.OnMissionBehaviorInitialize(mission);
             mission.AddMissionBehavior(new AdminPanelMissionView());
-            mission.AddMissionBehavior(new TroopCapBehavior(mission.GetMissionBehavior<MissionGauntletClassLoadout>(), AdminPanelClientData.Instance.InfantryCap, AdminPanelClientData.Instance.RangedCap, AdminPanelClientData.Instance.CavalryCap, AdminPanelClientData.Instance.HorseArcherCap));
 
         }
 

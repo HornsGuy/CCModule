@@ -48,18 +48,27 @@ namespace CCModuleServerOnly
             game.AddGameHandler<ClientMessageHandler>();
         }
 
+        private void MissionHarmonyPatches()
+        {
+            Harmony.DEBUG = true;
+
+            var harmony = new Harmony("CCModule.SpawnEquipmentOverride");
+            // harmony.PatchAll(assembly);
+            var spawnAgentFunction = typeof(Mission).GetMethod("SpawnAgent", BindingFlags.Public | BindingFlags.Instance);
+            var equipmentOverrideFunction = typeof(PatchMission).GetMethod("Prefix");
+            harmony.Patch(spawnAgentFunction, prefix: new HarmonyMethod(equipmentOverrideFunction));
+
+            var updateTroopIndex = typeof(MissionLobbyEquipmentNetworkComponent).GetMethod("HandleClientEventLobbyEquipmentUpdated", BindingFlags.NonPublic | BindingFlags.Instance);
+            var checkTroopCaps = typeof(PatchMissionLobbyEquipmentNetworkComponent).GetMethod("Prefix");
+            harmony.Patch(updateTroopIndex, prefix: new HarmonyMethod(checkTroopCaps));
+        }
+
         public override void OnMissionBehaviorInitialize(Mission mission)
         {
             base.OnMissionBehaviorInitialize(mission);
             EquipmentOverride.Instance.Setup();
             BannerlordWrapperGameHandler.MissionStartUpdateWrappers();
-            Harmony.DEBUG = true;
-
-            var harmony = new Harmony("CCModule.SpawnEquipmentOverride");
-            // harmony.PatchAll(assembly);
-            var original = typeof(Mission).GetMethod("SpawnAgent", BindingFlags.Public | BindingFlags.Instance);
-            var prefix = typeof(PatchMission).GetMethod("Prefix");
-            harmony.Patch(original, prefix: new HarmonyMethod(prefix));
+            MissionHarmonyPatches();
         }
 
     }

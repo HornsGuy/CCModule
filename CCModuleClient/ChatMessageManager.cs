@@ -10,7 +10,7 @@ using TaleWorlds.MountAndBlade.ViewModelCollection.Multiplayer;
 
 namespace CCModuleClient
 {
-    public class ChatMessageManager
+    class ChatMessageManager
     {
 
         public static void AddMessage(string message, Color c)

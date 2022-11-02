@@ -38,7 +38,6 @@ namespace CCModuleServerOnly
             handlerRegisterer.Register<APEndWarmupMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<APEndWarmupMessage>(this.HandleEndWarmupMessage));
             handlerRegisterer.Register<ClientListeningMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<ClientListeningMessage>(this.HandleClientListeningMessage));
             handlerRegisterer.Register<APUpdateTroopCapMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<APUpdateTroopCapMessage>(this.HandleUpdateTroopCapMessage));
-            handlerRegisterer.Register<RequestTroopIndexChange>(new GameNetworkMessage.ClientMessageHandlerDelegate<RequestTroopIndexChange>(this.HandleRequestTroopIndexChange));
             handlerRegisterer.Register<OpenAdminPanelMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<OpenAdminPanelMessage>(this.HandleOpenAdminPanelMessage));
             handlerRegisterer.Register<RequestMapsForGameType>(new GameNetworkMessage.ClientMessageHandlerDelegate<RequestMapsForGameType>(this.HandleRequestMapsForGameType));
             handlerRegisterer.Register<APStartMissionMessage>(new GameNetworkMessage.ClientMessageHandlerDelegate<APStartMissionMessage>(this.HandleAPStartMissionMessage));
@@ -103,39 +102,6 @@ namespace CCModuleServerOnly
                 TroopCapServerLogic.Instance.OnTroopCapChange();
             }
             
-            return true;
-        }
-
-        private void SetSelectedTroopIndexThread(object peerObject)
-        {
-            Thread.Sleep(10);
-            NetworkCommunicator peer = (NetworkCommunicator)peerObject;
-            MissionPeer missionPeer = peer.GetComponent<MissionPeer>();
-            if(missionPeer != null)
-            {
-                Logging.Instance.Info($"{missionPeer.Name} was removed from {missionPeer.SelectedTroopIndex}");
-                missionPeer.SelectedTroopIndex = 0;
-                PlayerWrapper.Instance.SetTroopIndexForPlayer(peer.VirtualPlayer.Id.ToString(), 0);
-                GameNetwork.BeginBroadcastModuleEvent();
-                GameNetwork.WriteMessage((GameNetworkMessage)new UpdateSelectedTroopIndex(peer, missionPeer.SelectedTroopIndex));
-                GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.ExcludeOtherTeamPlayers, peer);
-            }
-        }
-
-        private bool HandleRequestTroopIndexChange(NetworkCommunicator peer, RequestTroopIndexChange message)
-        {
-            // Get what type of troop the peer is changing to and see if they are exceeding the troop cap
-            // This is just in case of a hacked client
-            if (!TroopCapServerLogic.Instance.CheckIfPlayerTroopIndexIsUnderCap(peer.VirtualPlayer.Id.ToString(), message.SelectedTroopIndex))
-            {
-                Thread t = new Thread(new ParameterizedThreadStart(SetSelectedTroopIndexThread));
-                t.Start(peer);
-            }
-            else
-            {
-                PlayerWrapper.Instance.SetTroopIndexForPlayer(peer.VirtualPlayer.Id.ToString(), message.SelectedTroopIndex);
-            }
-
             return true;
         }
         

@@ -55,14 +55,14 @@ namespace CCModuleServerOnly
                         GameNetwork.WriteMessage((GameNetworkMessage)new UpdateSelectedTroopIndex(netPeer, 0));
                         GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.ExcludeOtherTeamPlayers, netPeer);
 
-                        if(netPeer.ControlledAgent == null || !netPeer.ControlledAgent.IsActive())
+                        if(mp.HasSpawnedAgentVisuals)
                         {
                             AgentBuildData abd = AdminPanel.Instance.GetAgentBuildDataForPlayer(netPeer).Item1;
                             GameNetwork.BeginModuleEventAsServer(netPeer);
                             GameNetwork.WriteMessage((GameNetworkMessage)new CreateAgentVisuals(netPeer, abd, mp.SelectedTroopIndex, 0));
                             GameNetwork.EndModuleEventAsServer();
                         }
-                        
+
                     }
                 }
             }
