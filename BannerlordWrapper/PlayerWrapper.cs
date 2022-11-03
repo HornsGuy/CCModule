@@ -23,6 +23,8 @@ namespace BannerlordWrapper
             }
         }
 
+        // This should only be used so long as players can rejoin a server and have their original team
+        Dictionary<string, TeamType> leftPlayersOGTeams = new Dictionary<string, TeamType>();
         Dictionary<string, Player> _players = new Dictionary<string, Player>();
 
         public PlayerWrapper()
@@ -41,6 +43,12 @@ namespace BannerlordWrapper
             {
                 _players.Add(p.ID, p);
                 Logging.Instance.Info($"{p} has joined the server");
+
+                if(leftPlayersOGTeams.ContainsKey(p.ID))
+                {
+                    p.ChangeTeam(leftPlayersOGTeams[p.ID]);
+                }
+
                 return true;
             }
             else
@@ -54,6 +62,15 @@ namespace BannerlordWrapper
         {
             if(_players.ContainsKey(ID))
             {
+                if(leftPlayersOGTeams.ContainsKey(ID))
+                {
+                    leftPlayersOGTeams[ID] = _players[ID].Team.TeamType;
+                }
+                else
+                {
+                    leftPlayersOGTeams.Add(ID, _players[ID].Team.TeamType);
+                }
+                
                 Logging.Instance.Info($"{_players[ID]} has left the server");
                 return _players.Remove(ID);
             }
@@ -66,6 +83,7 @@ namespace BannerlordWrapper
             {
                 player.ChangeTeam(TeamType.Spectator);
             }
+            leftPlayersOGTeams.Clear();
         }
 
         public Player GetPlayer(string ID)

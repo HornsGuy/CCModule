@@ -111,6 +111,7 @@
     <Compile Include="FromClient\AgentSpawnedMessage.cs" />
     <Compile Include="FromClient\ReEquipInitialWeapons.cs" />
     <Compile Include="FromServer\ChangePlayerCosmeticEquipment.cs" />
+    <Compile Include="FromServer\LargeTextServerMessage.cs" />
     <Compile Include="HarmonyPatches\PatchMission.cs" />
     <Compile Include="HarmonyPatches\PatchMissionLobbyEquipmentNetworkComponent.cs" />
     <Compile Include="Wrappers\BannerlordWrapperGameHandler.cs" />

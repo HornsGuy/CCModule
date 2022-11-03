@@ -120,6 +120,7 @@
     <Compile Include="FromClient\ReEquipInitialWeapons.cs" />
     <Compile Include="FromClient\RequestMapsForGameType.cs" />
     <Compile Include="FromServer\ChangePlayerCosmeticEquipment.cs" />
+    <Compile Include="FromServer\LargeTextServerMessage.cs" />
     <Compile Include="FromServer\ReturnMapsForGameTypeMessage.cs" />
     <Compile Include="FromServer\ColoredChatMessage.cs" />
     <Compile Include="FromServer\SyncAdminPanelMessage.cs" />

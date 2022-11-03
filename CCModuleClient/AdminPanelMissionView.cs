@@ -22,7 +22,7 @@ namespace CCModuleClient
 
         public AdminPanelMissionView()
         {
-            this.ViewOrderPriority = 10;
+            this.ViewOrderPriority = int.MaxValue;
             AdminPanelClientData.Instance.OnAvailableMapsUpdated += UpdateAvailableMaps;
         }
 
@@ -90,6 +90,8 @@ namespace CCModuleClient
                     CloseAdminPanelUI();
                 }
             }
+
+
         }
 
         private bool isPanelOpen()

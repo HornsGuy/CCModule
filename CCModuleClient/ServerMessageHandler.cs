@@ -44,6 +44,7 @@ namespace CCModuleClient
             handlerRegisterer.Register<SyncAdminPanelMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<SyncAdminPanelMessage>(this.HandleSyncAdminPanelMessage));
             handlerRegisterer.Register<ReturnMapsForGameTypeMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<ReturnMapsForGameTypeMessage>(this.HandleReturnMapsForGameTypeMessage));
             handlerRegisterer.Register<ColoredChatMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<ColoredChatMessage>(this.HandleColoredChatMessage));
+            handlerRegisterer.Register<LargeTextServerMessage>(new GameNetworkMessage.ServerMessageHandlerDelegate<LargeTextServerMessage>(this.HandleLargeTextServerMessage));
         }
 
         private void HandleAdminLoginMessage(AdminLoginMessage message)
@@ -90,6 +91,11 @@ namespace CCModuleClient
             {
                 ChatMessageManager.AddMessage(line, message.Red, message.Green, message.Blue);
             }
+        }
+
+        private void HandleLargeTextServerMessage(LargeTextServerMessage message)
+        {
+            ServerMessageView.UpdateServerMessage(message.Message);
         }
 
         public override void OnAfterSave()

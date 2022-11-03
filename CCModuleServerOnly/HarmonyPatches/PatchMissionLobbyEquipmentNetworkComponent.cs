@@ -1,4 +1,5 @@
 ﻿using BannerlordWrapper;
+using CCModuleNetworkMessages.FromServer;
 using NetworkMessages.FromClient;
 using System;
 using System.Collections.Generic;
@@ -16,14 +17,22 @@ namespace CCModuleServerOnly.HarmonyPatches
     {
         public static bool Prefix(Mission __instance, NetworkCommunicator peer, RequestTroopIndexChange message)
         {
-            Debug.Print("Patched lobby equipment", 0, Debug.DebugColor.Magenta);
+            
             if (peer != null && peer.VirtualPlayer != null && peer.VirtualPlayer.Id != null)
             {
                 if (!TroopCapServerLogic.Instance.CheckIfPlayerTroopIndexIsUnderCap(peer.VirtualPlayer.Id.ToString(), message.SelectedTroopIndex))
                 {
-                    FieldInfo fi = typeof(RequestTroopIndexChange).GetField("SelectedTroopIndex");
-                    fi.SetValue(message, 0);
-                    Debug.Print("Player Troop Changed!", 0, Debug.DebugColor.Magenta);
+                    Logging.Instance.Info($"Player with ID {peer.VirtualPlayer.Id} was denied troop ID {message.SelectedTroopIndex}");
+                    GameNetwork.BeginModuleEventAsServer(peer);
+                    GameNetwork.WriteMessage(new LargeTextServerMessage("Over Troop Cap, Select A Different Class"));
+                    GameNetwork.EndModuleEventAsServer();
+                    return false;
+                }
+                else
+                {
+                    GameNetwork.BeginModuleEventAsServer(peer);
+                    GameNetwork.WriteMessage(new LargeTextServerMessage(""));
+                    GameNetwork.EndModuleEventAsServer();
                 }
             }
             PlayerWrapper.Instance.SetTroopIndexForPlayer(peer.VirtualPlayer.Id.ToString(), message.SelectedTroopIndex);
