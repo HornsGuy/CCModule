@@ -113,20 +113,24 @@
     <Compile Include="AdminPanelClientData.cs" />
     <Compile Include="CCModuleClientSubModule.cs" />
     <Compile Include="ChatMessageManager.cs" />
+    <Compile Include="FromClient\AgentSpawnedMessage.cs" />
     <Compile Include="FromClient\APStartMissionMessage.cs" />
     <Compile Include="FromClient\APUpdateTroopCapMessage.cs" />
     <Compile Include="FromClient\OpenAdminPanelMessage.cs" />
+    <Compile Include="FromClient\ReEquipInitialWeapons.cs" />
     <Compile Include="FromClient\RequestMapsForGameType.cs" />
+    <Compile Include="FromServer\ChangePlayerCosmeticEquipment.cs" />
+    <Compile Include="FromServer\LargeTextServerMessage.cs" />
     <Compile Include="FromServer\ReturnMapsForGameTypeMessage.cs" />
     <Compile Include="FromServer\ColoredChatMessage.cs" />
     <Compile Include="FromServer\SyncAdminPanelMessage.cs" />
     <Compile Include="FromServer\TroopCapServerMessage.cs" />
-    <Compile Include="TroopCapBehavior.cs" />
     <Compile Include="FromClient\APEndWarmupMessage.cs" />
     <Compile Include="FromClient\ClientListeningMessage.cs" />
     <Compile Include="FromServer\AdminLoginMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerMessageHandler.cs" />
+    <Compile Include="ServerMessageView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClientServerShared\ClientServerShared.csproj">

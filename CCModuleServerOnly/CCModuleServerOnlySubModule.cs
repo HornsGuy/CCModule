@@ -13,6 +13,10 @@ using BannerlordWrapper;
 using CCModuleServerOnly.Wrappers;
 using TaleWorlds.ObjectSystem;
 using TaleWorlds.Localization;
+using HarmonyLib;
+using System.Reflection;
+using CCModuleServerOnly.HarmonyPatches;
+
 namespace CCModuleServerOnly
 {
     public class CCModuleServerOnlySubModule : MBSubModuleBase
@@ -28,6 +32,7 @@ namespace CCModuleServerOnly
             Debug.Print("Player Manager Loaded", 0, Debug.DebugColor.Magenta);
             PlayerManager.Instance.Setup();
             Logging.Instance.StartLogging("CCLogs", Logging.LogLevel.Debug);
+
         }
 
         protected override void InitializeGameStarter(Game game, IGameStarter starterObject)
@@ -43,11 +48,27 @@ namespace CCModuleServerOnly
             game.AddGameHandler<ClientMessageHandler>();
         }
 
+        private void MissionHarmonyPatches()
+        {
+            Harmony.DEBUG = true;
+
+            var harmony = new Harmony("CCModule.SpawnEquipmentOverride");
+            // harmony.PatchAll(assembly);
+            var spawnAgentFunction = typeof(Mission).GetMethod("SpawnAgent", BindingFlags.Public | BindingFlags.Instance);
+            var equipmentOverrideFunction = typeof(PatchMission).GetMethod("Prefix");
+            harmony.Patch(spawnAgentFunction, prefix: new HarmonyMethod(equipmentOverrideFunction));
+
+            var updateTroopIndex = typeof(MissionLobbyEquipmentNetworkComponent).GetMethod("HandleClientEventLobbyEquipmentUpdated", BindingFlags.NonPublic | BindingFlags.Instance);
+            var checkTroopCaps = typeof(PatchMissionLobbyEquipmentNetworkComponent).GetMethod("Prefix");
+            harmony.Patch(updateTroopIndex, prefix: new HarmonyMethod(checkTroopCaps));
+        }
+
         public override void OnMissionBehaviorInitialize(Mission mission)
         {
             base.OnMissionBehaviorInitialize(mission);
-            mission.AddMissionBehavior(new EquipmentOverrideMissionBehavior());
+            EquipmentOverride.Instance.Setup();
             BannerlordWrapperGameHandler.MissionStartUpdateWrappers();
+            MissionHarmonyPatches();
         }
 
     }

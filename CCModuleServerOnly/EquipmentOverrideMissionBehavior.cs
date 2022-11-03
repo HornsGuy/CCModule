@@ -9,6 +9,7 @@ using TaleWorlds.Core;
 using Newtonsoft.Json;
 using TaleWorlds.Library;
 using System.Threading;
+using TaleWorlds.ObjectSystem;
 
 namespace CCModuleServerOnly
 {
@@ -20,16 +21,27 @@ namespace CCModuleServerOnly
         public List<Tuple<string, string>> equipmentToOverride { get; set; } = new List<Tuple<string, string>>();
     }
 
-    class EquipmentOverrideMissionBehavior : MissionLogic
+    class EquipmentOverride
     {
+
+        static EquipmentOverride _instance;
+        public static EquipmentOverride Instance
+        {
+            get
+            {
+                if(_instance == null)
+                {
+                    _instance = new EquipmentOverride();
+                }
+                return _instance;
+            }
+        }
+
         private string jsonPath = "equipment.json";
 
         Dictionary<string, List<Tuple<EquipmentIndex, string>>> equipmentToOverride = new Dictionary<string, List<Tuple<EquipmentIndex, string>>>();
 
-        // Prevents infinite looping because we are giving equipment by spawning a new agent
-        Dictionary<string, bool> lastSpawnForPlayerWasOverride = new Dictionary<string, bool>();
-
-        public EquipmentOverrideMissionBehavior()
+        public EquipmentOverride()
         {
             if (File.Exists(jsonPath))
             {
@@ -39,16 +51,14 @@ namespace CCModuleServerOnly
                 foreach (var ed in equipmentOverrides)
                 {
                     Debug.Print("Override found for " + ed.name, 0, Debug.DebugColor.Yellow);
-                    if (ed.ID != "ID Goes Here")
+                    if (ed.ID != "Player ID Goes Here")
                     {
                         equipmentToOverride.Add(ed.ID, ConvertEquipmentFromFile(ed.equipmentToOverride));
-                        lastSpawnForPlayerWasOverride[ed.ID] = false;
                     }
                 }
             }
             else
             {
-
                 List<EquipmentData> toSerialize = new List<EquipmentData>();
 
                 toSerialize.Add(generateExampleData());
@@ -58,6 +68,11 @@ namespace CCModuleServerOnly
                 string jsonContents = JsonConvert.SerializeObject(toSerialize, Formatting.Indented);
                 File.WriteAllText(jsonPath, jsonContents);
             }
+        }
+
+        public void Setup()
+        {
+
         }
 
         private EquipmentData generateExampleData()
@@ -97,81 +112,28 @@ namespace CCModuleServerOnly
             return toReturn;
         }
 
-        public override MissionBehaviorType BehaviorType
-        {
-            get
-            {
-                return MissionBehaviorType.Other;
-            }
-        }
-
-        private bool PlayerHasEquipmentToBeOverridden(string ID)
+        public bool PlayerHasEquipmentToBeOverridden(string ID)
         {
             return equipmentToOverride.ContainsKey(ID);
         }
 
-        private bool AgentIsReadyToBeReplaced(Agent a)
+        public Equipment GetOverriddenEquipment(string ID, Equipment originalEquipment)
         {
-            if(a != null)
+            Equipment newEquipment = originalEquipment;
+
+            foreach (var itemToOverride in equipmentToOverride[ID])
             {
-                return a.HasBeenBuilt &&
-                    a.State == AgentState.Active &&
-                    a.IsActive() &&
-                    a.IsPlayerControlled &&
-                    a.MissionRepresentative != null &&
-                    a.MissionPeer != null;
-            }
-            return false;
-        }
-
-        private void ThreadProc(Object obj)
-        {
-            int count = 0;
-
-            Tuple<string, List<Tuple<EquipmentIndex, string>>> overrideInfo = (Tuple<string, List<Tuple<EquipmentIndex, string>>>)obj;
-
-            while (!AgentIsReadyToBeReplaced(AdminPanel.Instance.GetPlayerNetworkPeerFromID(overrideInfo.Item1).ControlledAgent))
-            {
-                Thread.Sleep(1000);
-                count += 1;
-            }
-
-            Thread.Sleep(1000);
-
-            Debug.Print($"Slept for {count} iterations");
-
-            AdminPanel.Instance.GivePlayerAgentCosmeticEquipment(overrideInfo.Item1, overrideInfo.Item2);
-        }
-
-        public override void OnAgentBuild(Agent agent, Banner banner)
-        {
-
-            if (agent.IsHuman)
-            {
-                // Get the palyer's ID and check if they have equipment
-                string ID = agent.MissionPeer.Peer.Id.ToString();
-
-                //Debug.Print("Player Spawning", 0, Debug.DebugColor.Yellow);
-
-                if (PlayerHasEquipmentToBeOverridden(ID))
+                ItemObject item = MBObjectManager.Instance.GetObject<ItemObject>(itemToOverride.Item2);
+                if(item != null)
                 {
-                    //Debug.Print("Player Has Overrides", 0, Debug.DebugColor.Yellow);
-                    if (!lastSpawnForPlayerWasOverride[ID])
-                    {
-                        //Debug.Print("Overriding " + ID, 0, Debug.DebugColor.Yellow); 
-                        lastSpawnForPlayerWasOverride[ID] = true;
-
-                        Thread t = new Thread(new ParameterizedThreadStart(ThreadProc));
-                        t.Start(new Tuple<string, List<Tuple<EquipmentIndex, string>>>(ID, equipmentToOverride[ID]));
-                    }
-                    else
-                    {
-                        //Debug.Print("Skipping Override " + ID, 0, Debug.DebugColor.Yellow);
-                        lastSpawnForPlayerWasOverride[ID] = false;
-                    }
-
+                    EquipmentElement equipmentElement = originalEquipment[itemToOverride.Item1];
+                    equipmentElement.CosmeticItem = item;
+                    newEquipment[itemToOverride.Item1] = equipmentElement;
                 }
             }
+
+            return newEquipment;
         }
+
     }
 }
