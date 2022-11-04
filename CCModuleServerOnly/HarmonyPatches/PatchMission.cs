@@ -26,12 +26,6 @@ namespace CCModuleServerOnly.HarmonyPatches
                     {
                         Equipment newEquipment = EquipmentOverride.Instance.GetOverriddenEquipment(ID, agentBuildData.AgentData.AgentOverridenEquipment);
                         agentBuildData = agentBuildData.Equipment(newEquipment);
-                        if(curPeer.Peer != null)
-                        {
-                            GameNetwork.BeginBroadcastModuleEvent();
-                            GameNetwork.WriteMessage((GameNetworkMessage)new SyncGoldsForSkirmish(curPeer.Peer, 1000));
-                            GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None);
-                        }
                     }
                 }
             }

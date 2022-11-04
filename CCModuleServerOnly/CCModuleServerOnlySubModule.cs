@@ -61,6 +61,10 @@ namespace CCModuleServerOnly
             var updateTroopIndex = typeof(MissionLobbyEquipmentNetworkComponent).GetMethod("HandleClientEventLobbyEquipmentUpdated", BindingFlags.NonPublic | BindingFlags.Instance);
             var checkTroopCaps = typeof(PatchMissionLobbyEquipmentNetworkComponent).GetMethod("Prefix");
             harmony.Patch(updateTroopIndex, prefix: new HarmonyMethod(checkTroopCaps));
+
+            var changeGoldForPeer = typeof(MissionMultiplayerGameModeBase).GetMethod("ChangeCurrentGoldForPeer", BindingFlags.Public | BindingFlags.Instance);
+            var overrideGold = typeof(PatchMissionMultiplayerGameModeBase).GetMethod("Prefix");
+            harmony.Patch(changeGoldForPeer, prefix: new HarmonyMethod(overrideGold));
         }
 
         public override void OnMissionBehaviorInitialize(Mission mission)
