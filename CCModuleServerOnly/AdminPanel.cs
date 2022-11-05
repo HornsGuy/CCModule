@@ -53,7 +53,8 @@ namespace CCModuleServerOnly
         // To successfully change the map, this thread must be called when the mission has ended
         public static void ThreadProc(Object missionData)
         {
-            while(Mission.Current != null)
+            // This logic is taken from start_mission
+            while(!(GameStateManager.Current.ActiveState is LobbyGameStateDedicatedCustomServer))
             {
                 Thread.Sleep(10);
             }
