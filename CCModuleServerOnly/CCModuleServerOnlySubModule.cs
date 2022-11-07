@@ -50,7 +50,6 @@ namespace CCModuleServerOnly
 
         private void MissionHarmonyPatches()
         {
-            Harmony.DEBUG = true;
 
             var harmony = new Harmony("CCModule.SpawnEquipmentOverride");
             // harmony.PatchAll(assembly);
@@ -65,6 +64,25 @@ namespace CCModuleServerOnly
             var changeGoldForPeer = typeof(MissionMultiplayerGameModeBase).GetMethod("ChangeCurrentGoldForPeer", BindingFlags.Public | BindingFlags.Instance);
             var overrideGold = typeof(PatchMissionMultiplayerGameModeBase).GetMethod("Prefix");
             harmony.Patch(changeGoldForPeer, prefix: new HarmonyMethod(overrideGold));
+
+            TaleworldsPatches(harmony);
+        }
+
+        // The patches in this method could be removed if Taleworlds fixes bugs.
+        // I expect these patches to be the most volatile if TW code changes
+        private void TaleworldsPatches(Harmony harmony)
+        {
+            var sendPeerInformationsToPeer = typeof(MissionLobbyComponent).GetMethod("SendPeerInformationsToPeer", BindingFlags.NonPublic | BindingFlags.Instance);
+            var patchMissionChangeIssue = typeof(PatchMissionLobbyComponent_SendPeerInformationsToPeer).GetMethod("Prefix");
+            harmony.Patch(sendPeerInformationsToPeer, prefix: new HarmonyMethod(patchMissionChangeIssue));
+
+            var onPlayerKills = typeof(MissionLobbyComponent).GetMethod("OnPlayerKills", BindingFlags.NonPublic | BindingFlags.Instance);
+            var patchPlayerKills = typeof(PatchMissionLobbyComponent_OnPlayerKills).GetMethod("Prefix");
+            harmony.Patch(onPlayerKills, prefix: new HarmonyMethod(patchPlayerKills));
+
+            var spawnedMissionObjects = typeof(MissionNetworkComponent).GetMethod("SendSpawnedMissionObjectsToPeer", BindingFlags.NonPublic | BindingFlags.Instance);
+            var patchSpawnMissionObjects = typeof(PatchMissionNetworkComponent).GetMethod("Prefix");
+            harmony.Patch(spawnedMissionObjects, prefix: new HarmonyMethod(patchSpawnMissionObjects));
         }
 
         public override void OnMissionBehaviorInitialize(Mission mission)
