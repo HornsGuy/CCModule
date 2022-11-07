@@ -21,6 +21,19 @@ namespace CCModuleClient
         GauntletLayer _layer;
         IGauntletMovie _movie;
 
+        // TODO: Should really refactor this code out into its own type of thread implmentation
+        const int defaultMessageTimeoutInTenths = 20;
+        static int timeUntilMessageDisappearsInTenths = 0;
+
+        static int threadRunning = 0;
+        static bool ThreadNotRunning
+        {
+            get
+            {
+                return threadRunning == 0;
+            }
+        }
+        
         public ServerMessageView()
         {
             
@@ -33,8 +46,26 @@ namespace CCModuleClient
                 ServerMessageView serverMessageView = Mission.Current.GetMissionBehavior<ServerMessageView>();
                 if (serverMessageView != null && serverMessageView._dataSource != null)
                 {
-                    Thread t = new Thread(new ParameterizedThreadStart(serverMessageView.UpdateThread));
-                    t.Start(message);
+                    // We have a message to display
+                    if(message != "")
+                    {
+                        // Whether thread is running or not, we reset the timer.
+                        // This will extend the original message, or setup for a new one
+                        Interlocked.Exchange(ref timeUntilMessageDisappearsInTenths, defaultMessageTimeoutInTenths);
+
+                        if (ThreadNotRunning)
+                        {
+                            // Thread is not running, so start a new one 
+                            Interlocked.Increment(ref threadRunning);
+                            Thread t = new Thread(new ParameterizedThreadStart(serverMessageView.MessageFadeThread));
+                            t.Start(message);
+                        }
+                    }
+                    else
+                    {
+                        // We need to clear message, so just set the timer to 1 so it ends organically
+                        Interlocked.Exchange(ref timeUntilMessageDisappearsInTenths, 1);
+                    }
                 }
             }
         }
@@ -91,18 +122,25 @@ namespace CCModuleClient
             }
         }
 
-        void UpdateThread(object obj)
+        void MessageFadeThread(object obj)
         {
-            if(_dataSource != null)
+            if (_dataSource != null)
             {
                 string message = (string)obj;
                 _dataSource.ServerMessage = message;
-                Thread.Sleep(3000);
+                
+                while(timeUntilMessageDisappearsInTenths > 0)
+                {
+                    Thread.Sleep(100);
+                    Interlocked.Decrement(ref timeUntilMessageDisappearsInTenths);
+                }
+
                 if (_dataSource != null)
                 {
                     _dataSource.ServerMessage = "";
                 } 
             }
+            Interlocked.Decrement(ref threadRunning);
         }
     }
 

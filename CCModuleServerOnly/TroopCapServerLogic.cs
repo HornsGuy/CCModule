@@ -35,7 +35,7 @@ namespace CCModuleServerOnly
         {
             BannerlordWrapper.Team playerTeam = PlayerWrapper.Instance.GetPlayer(ID).Team;
             int troopCapPercent = AdminPanelServerData.Instance.GetTroopCapForTroopType(playerTeam.GetTroopType(troopIndex));
-            return TroopCapLogic.TroopUnderCapForTeam(playerTeam, troopIndex, troopCapPercent);
+            return TroopCapLogic.TroopUnderCapForTeam(playerTeam, troopIndex, troopCapPercent) || playerTeam.TeamType == TeamType.Spectator;
         }
 
         public void OnTroopCapChange()
