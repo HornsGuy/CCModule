@@ -81,6 +81,10 @@
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Dedicated Server\bin\Win64_Shipping_Server\TaleWorlds.DotNet.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="TaleWorlds.Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Servers\ChatCommands\Mount &amp; Blade II Dedicated Server\bin\Win64_Shipping_Server\TaleWorlds.Engine.dll</HintPath>
+    </Reference>
     <Reference Include="TaleWorlds.Library, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Dedicated Server\bin\Win64_Shipping_Server\TaleWorlds.Library.dll</HintPath>
@@ -126,8 +130,11 @@
     <Compile Include="FromClient\ReEquipInitialWeapons.cs" />
     <Compile Include="FromServer\ChangePlayerCosmeticEquipment.cs" />
     <Compile Include="FromServer\LargeTextServerMessage.cs" />
+    <Compile Include="HarmonyPatches\Taleworlds Patches\PatchMissionLobbyComponent.cs" />
+    <Compile Include="HarmonyPatches\PatchMissionMultiplayerGameModeBase.cs" />
     <Compile Include="HarmonyPatches\PatchMission.cs" />
     <Compile Include="HarmonyPatches\PatchMissionLobbyEquipmentNetworkComponent.cs" />
+    <Compile Include="HarmonyPatches\Taleworlds Patches\PatchMissionNetworkComponent.cs" />
     <Compile Include="Wrappers\BannerlordWrapperGameHandler.cs" />
     <Compile Include="ClientMessageHandler.cs" />
     <Compile Include="CCModuleGameHandler.cs" />

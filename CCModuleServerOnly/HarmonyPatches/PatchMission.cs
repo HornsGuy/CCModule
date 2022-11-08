@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetworkMessages.FromServer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,8 @@ using System.Threading.Tasks;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
+using TaleWorlds.MountAndBlade.Network.Messages;
+
 namespace CCModuleServerOnly.HarmonyPatches
 {
     class PatchMission
@@ -23,7 +26,6 @@ namespace CCModuleServerOnly.HarmonyPatches
                     {
                         Equipment newEquipment = EquipmentOverride.Instance.GetOverriddenEquipment(ID, agentBuildData.AgentData.AgentOverridenEquipment);
                         agentBuildData = agentBuildData.Equipment(newEquipment);
-                        Debug.Print("Overridding spawn equipment",0,Debug.DebugColor.Magenta);
                     }
                 }
             }
