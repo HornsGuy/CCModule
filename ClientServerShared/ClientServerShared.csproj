@@ -49,9 +49,11 @@
     <Reference Include="System.Xml" />
     <Reference Include="TaleWorlds.Core">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Dedicated Server\bin\Win64_Shipping_Server\TaleWorlds.Core.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="TaleWorlds.MountAndBlade">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Dedicated Server\bin\Win64_Shipping_Server\TaleWorlds.MountAndBlade.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -67,4 +69,8 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(ProjectDir)$(OutDir)" "$(SolutionDir)Release\ClientRelease\bin\Win64_Shipping_Client\" /D /y /r /F
+xcopy "$(ProjectDir)$(OutDir)" "$(SolutionDir)Release\ServerRelease\" /D /y /r /F</PostBuildEvent>
+  </PropertyGroup>
 </Project>
