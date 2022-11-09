@@ -76,10 +76,6 @@ namespace CCModuleServerOnly
             var patchMissionChangeIssue = typeof(PatchMissionLobbyComponent_SendPeerInformationsToPeer).GetMethod("Prefix");
             harmony.Patch(sendPeerInformationsToPeer, prefix: new HarmonyMethod(patchMissionChangeIssue));
 
-            var onPlayerKills = typeof(MissionLobbyComponent).GetMethod("OnPlayerKills", BindingFlags.NonPublic | BindingFlags.Instance);
-            var patchPlayerKills = typeof(PatchMissionLobbyComponent_OnPlayerKills).GetMethod("Prefix");
-            harmony.Patch(onPlayerKills, prefix: new HarmonyMethod(patchPlayerKills));
-
             var spawnedMissionObjects = typeof(MissionNetworkComponent).GetMethod("SendSpawnedMissionObjectsToPeer", BindingFlags.NonPublic | BindingFlags.Instance);
             var patchSpawnMissionObjects = typeof(PatchMissionNetworkComponent).GetMethod("Prefix");
             harmony.Patch(spawnedMissionObjects, prefix: new HarmonyMethod(patchSpawnMissionObjects));
