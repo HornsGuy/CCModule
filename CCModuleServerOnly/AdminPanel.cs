@@ -15,6 +15,8 @@ using TaleWorlds.ObjectSystem;
 using TaleWorlds.MountAndBlade.Diamond;
 using System.Reflection;
 using CCModuleNetworkMessages.FromServer;
+using BannerlordWrapper;
+using System.IO;
 
 namespace CCModuleServerOnly
 {
@@ -297,7 +299,18 @@ namespace CCModuleServerOnly
             Tuple<bool, string> gameTypeSearch = FindSingleGameType(searchString);
             if (gameTypeSearch.Item1)
             {
-                return MultiplayerGameTypes.GetGameTypeInfo(gameTypeSearch.Item2).Scenes.ToList().Union(GetMapsInPool()).ToList();
+                List<string> nativeMaps = MultiplayerGameTypes.GetGameTypeInfo(gameTypeSearch.Item2).Scenes.ToList().Union(GetMapsInPool()).ToList();
+                List<string> ccModuleMaps = new List<string>();
+                if (maps.ContainsKey(gameTypeSearch.Item2))
+                {
+                    ccModuleMaps = maps[gameTypeSearch.Item2];
+                }
+                else if(maps.Keys.Count != 0)
+                {
+                    Logging.Instance.Error($"maps dictionary did not have game type '{gameTypeSearch.Item2}'");
+                }
+                
+                return ccModuleMaps.Union(nativeMaps).ToList();
             }
             return new List<string>();
         }
@@ -602,7 +615,7 @@ namespace CCModuleServerOnly
             if (networkPeer != null)
                 return networkPeer.PlayerConnectionInfo.GetParameter<PlayerData>("PlayerData").BodyProperties;
             Debug.FailedAssert("networkCommunicator != null", "C:\\Develop\\MB3\\Source\\Bannerlord\\TaleWorlds.MountAndBlade\\Missions\\Multiplayer\\SpawnBehaviors\\SpawningBehaviors\\SpawningBehaviorBase.cs", nameof(GetBodyProperties), 366);
-            Team team = missionPeer.Team;
+            TaleWorlds.MountAndBlade.Team team = missionPeer.Team;
             BasicCharacterObject troopCharacter = MultiplayerClassDivisions.GetMPHeroClasses(cultureLimit).ToList<MultiplayerClassDivisions.MPHeroClass>().GetRandomElement<MultiplayerClassDivisions.MPHeroClass>().TroopCharacter;
             MatrixFrame spawnFrame = Mission.Current.GetMissionBehavior<SpawnComponent>().GetSpawnFrame(team, troopCharacter.HasMount(), true);
             AgentBuildData agentBuildData1 = new AgentBuildData(troopCharacter).Team(team).InitialPosition(in spawnFrame.origin);
@@ -788,6 +801,42 @@ namespace CCModuleServerOnly
             if(peer != null)
             {
                 SendServerMessageToPeer(peer, message);
+            }
+        }
+
+        Dictionary<string, List<string>> maps = new Dictionary<string, List<string>>();
+        List<string> gameTypes = new List<string>();
+        
+        public void InitializeGameTypesForMaps(string gameTypesFile)
+        {
+            if(File.Exists(gameTypesFile))
+            {
+                gameTypes = new List<string>(File.ReadAllLines(gameTypesFile));
+
+                foreach (var gameType in gameTypes)
+                {
+                    maps.Add(gameType.Trim(), new List<string>());
+                }
+
+                Logging.Instance.Info($"Found the following game types: {String.Join(", ", gameTypes)}");
+            }
+            else
+            {
+                Logging.Instance.Warn($"Unable to find gameTypesFile {gameTypesFile}. Loading maps will be skipped");
+            }
+            
+        }
+
+        public void AddMap(string gameType, string map)
+        {
+            if(gameTypes.Contains(gameType))
+            {
+                maps[gameType].Add(map);
+                Logging.Instance.Info($"Added '{map}' as a {gameType} map");
+            }
+            else
+            {
+                Logging.Instance.Warn($"Unable to find gamemode matching '{gameType}' while trying to add map '{map}'");
             }
         }
     }

@@ -26,13 +26,15 @@ namespace CCModuleServerOnly
             base.OnSubModuleLoad();
             Setup();
         }
-
+        
         private void Setup()
         {
             Debug.Print("Player Manager Loaded", 0, Debug.DebugColor.Magenta);
             PlayerManager.Instance.Setup();
             Logging.Instance.StartLogging("CCLogs", Logging.LogLevel.Debug);
 
+            // Load maps
+            MapLoader.LoadMaps("CCFiles\\gameTypes.txt", "CCFiles\\maps.csv");
         }
 
         protected override void InitializeGameStarter(Game game, IGameStarter starterObject)

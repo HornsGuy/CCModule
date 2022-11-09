@@ -133,12 +133,17 @@ namespace CCModuleServerOnly
                 if (!AdminPanel.Instance.EndingCurrentMissionThenStartingNewMission)
                 {
                     string startMissionMessage = "Changing Map:" +
-                                            "\nGame Type: " + message.GameType +
+                                            "\nGameType: " + message.GameType +
                                             "\nMap: " + message.Map +
                                             "\nFaction1: " + message.Faction1 +
                                             "\nFaction2: " + message.Faction2;
                     AdminPanel.Instance.BroadcastServerMessage(startMissionMessage);
                     AdminPanel.Instance.StartMission(message.GameType, message.Map, message.Faction1, message.Faction2);
+                    Logging.Instance.Info("Starting Mission:");
+                    Logging.Instance.Info("GameType: " + message.GameType);
+                    Logging.Instance.Info("Map: " + message.Map);
+                    Logging.Instance.Info("Faction1: " + message.Faction1);
+                    Logging.Instance.Info("Faction2: " + message.Faction2);
                 }
                 else
                 {
