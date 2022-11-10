@@ -566,8 +566,8 @@ namespace CCModuleServerOnly
             MultiplayerRoundController roundController = Mission.Current.GetMissionBehavior<MultiplayerRoundController>();
             if(roundController != null)
             {
-                typeof(MultiplayerRoundController).GetMethod("EndRound", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(roundController, null);
                 typeof(MultiplayerRoundController).GetMethod("EndPreparation", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(roundController, null);
+                typeof(MultiplayerRoundController).GetMethod("EndRound", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(roundController, null);
             }
         }
 
