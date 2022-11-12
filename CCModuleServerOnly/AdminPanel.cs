@@ -60,9 +60,14 @@ namespace CCModuleServerOnly
             {
                 Thread.Sleep(10);
             }
-
+            int countdown = 7;
             // Give us some buffer between the OnMissionEnd event and starting the next mission
-            Thread.Sleep(7000);
+            while(countdown > 0)
+            {
+                AdminPanel.Instance.BroadcastServerMessage($"Map starting in {countdown}");
+                Thread.Sleep(1000);
+                countdown--;
+            }
 
             AdminPanel.Instance.StartMissionOnly((MissionData)missionData);
             AdminPanel.Instance.EndingCurrentMissionThenStartingNewMission = false;
@@ -363,13 +368,6 @@ namespace CCModuleServerOnly
             currentState.cultureTeam1 = faction1;
             currentState.cultureTeam2 = faction2;
             StartMission(currentState);
-        }
-
-        public void BroadcastMessage(string message)
-        {
-            GameNetwork.BeginBroadcastModuleEvent();
-            GameNetwork.WriteMessage(new ServerMessage(message));
-            GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None);
         }
 
         public void ResetMission()
@@ -778,9 +776,10 @@ namespace CCModuleServerOnly
 
         public void BroadcastServerMessage(string message)
         {
-            GameNetwork.BeginBroadcastModuleEvent();
-            GameNetwork.WriteMessage(new ColoredChatMessage(message, 50, 200, 50));
-            GameNetwork.EndBroadcastModuleEvent(GameNetwork.EventBroadcastFlags.None, null);
+            foreach (var peer in GameNetwork.NetworkPeers)
+            {
+                AdminPanel.Instance.SendServerMessageToPeer(peer, message);
+            }
         }
 
         private NetworkCommunicator GetNetworkPeerByID(string ID)
