@@ -559,6 +559,16 @@ namespace CCModuleServerOnly
             }
         }
 
+        public void EndRound()
+        {
+            MultiplayerRoundController roundController = Mission.Current.GetMissionBehavior<MultiplayerRoundController>();
+            if(roundController != null)
+            {
+                typeof(MultiplayerRoundController).GetMethod("EndPreparation", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(roundController, null);
+                typeof(MultiplayerRoundController).GetMethod("EndRound", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(roundController, null);
+            }
+        }
+
         private void EndMissionThenStartMission(MissionData missionData)
         {
             MissionListener listener = new MissionListener();
@@ -570,6 +580,7 @@ namespace CCModuleServerOnly
             EndingCurrentMissionThenStartingNewMission = true;
 
             EndWarmup();
+            EndRound();
 
             listener.setMissionData(missionData);
             DedicatedCustomServerSubModule.Instance.EndMission();
@@ -683,88 +694,9 @@ namespace CCModuleServerOnly
             return null;
         }
 
-        public bool GivePlayerAgentCosmeticEquipment(string playerID, List<Tuple<EquipmentIndex, string>> itemsToGive)
-        {
-            NetworkCommunicator peer = GetPlayerNetworkPeerFromID(playerID);
-            if (peer != null)
-            {
-                return GivePlayerAgentCosmeticEquipment(peer, itemsToGive);
-            }
-            return false;
-        }
-
         public void KickPlayer(NetworkCommunicator peer)
         {
             DedicatedCustomServerSubModule.Instance.DedicatedCustomGameServer.KickPlayer(peer.VirtualPlayer.Id, false);
-        }
-
-        public bool GivePlayerAgentCosmeticEquipment(NetworkCommunicator networkPeer, List<Tuple<EquipmentIndex, string>> itemsToGive)
-        {
-            if (networkPeer.ControlledAgent != null)
-            {
-                Agent oldAgent = networkPeer.ControlledAgent;
-                bool wasRidingHorse = !oldAgent.SpawnEquipment[EquipmentIndex.Horse].IsEmpty;
-
-                Vec3 OriginalPos = oldAgent.Position;
-                Tuple<AgentBuildData, int> retVal = GetAgentBuildDataForPlayer(networkPeer);
-
-                AgentBuildData bda = retVal.Item1;
-
-                // Set position and look direction
-                bda = bda.InitialPosition(OriginalPos);
-                Vec3 lookDir3 = oldAgent.LookDirection;
-                Vec2 lookDir = lookDir3.AsVec2;
-                bda = bda.InitialDirection(lookDir);
-
-                Equipment newEquipment = new Equipment(networkPeer.ControlledAgent.Character.Equipment.Clone());
-
-                foreach (var itemToGive in itemsToGive)
-                {
-                    ItemObject item = MBObjectManager.Instance.GetObject<ItemObject>(itemToGive.Item2);
-                    if (item != null)
-                    {
-                        EquipmentElement newItemElement = newEquipment[itemToGive.Item1];
-                        newItemElement.CosmeticItem = item;
-                        newEquipment[itemToGive.Item1] = newItemElement;
-                    }
-                    // If we pass an empty string, clear the armor
-                    if (itemToGive.Item2 == "")
-                    {
-                        newEquipment[itemToGive.Item1] = new EquipmentElement();
-                    }
-                }
-
-                // Get selected for everything else
-                newEquipment[EquipmentIndex.Horse] = oldAgent.SpawnEquipment[EquipmentIndex.Horse];
-                newEquipment[EquipmentIndex.HorseHarness] = oldAgent.SpawnEquipment[EquipmentIndex.HorseHarness];
-
-                newEquipment[EquipmentIndex.Weapon0] = oldAgent.SpawnEquipment[EquipmentIndex.Weapon0];
-                newEquipment[EquipmentIndex.Weapon1] = oldAgent.SpawnEquipment[EquipmentIndex.Weapon1];
-                newEquipment[EquipmentIndex.Weapon2] = oldAgent.SpawnEquipment[EquipmentIndex.Weapon2];
-                newEquipment[EquipmentIndex.Weapon3] = oldAgent.SpawnEquipment[EquipmentIndex.Weapon3];
-
-
-                // Override the equipment now that cosmetics are placed
-                bda = bda.Equipment(newEquipment);
-
-
-
-                // Spawning the agent, player immediately takes control
-                Agent newAgent = Mission.Current.SpawnAgent(bda);
-
-                // Make sure we wield the default items
-                newAgent.WieldInitialWeapons();
-
-                // Before we can remove the old agent, we need to increment the number of bots alive on the scoreboard.
-                // Oversight on Taleworlds' part
-                Mission.Current.GetMissionBehavior<MissionScoreboardComponent>().Sides[(int)(networkPeer.GetComponent<MissionPeer>().Team.Side)].BotScores.AliveCount += 1;
-
-                // Fade old agent and horse if ncessary
-                oldAgent.FadeOut(true, wasRidingHorse);
-
-                return true;
-            }
-            return false;
         }
 
         public void SendServerMessageToPeer(NetworkCommunicator peer, string message)
