@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BannerlordWrapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace CCModuleServerOnly.HarmonyPatches
                 if (netPeer != null && netPeer.VirtualPlayer != null && netPeer.VirtualPlayer.Id != null)
                 {
                     string ID = netPeer.VirtualPlayer.Id.ToString();
-                    if (EquipmentOverride.Instance.PlayerHasEquipmentToBeOverridden(ID))
+                    if (PlayerWrapper.Instance.PlayerHasLordArmor(ID))
                     {
                         newAmount = 300;
                     }

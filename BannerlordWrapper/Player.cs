@@ -15,7 +15,7 @@ namespace BannerlordWrapper
         public string Name { get; private set; }
         public Team Team { get; private set; }
         public Troop Troop { get; private set; }
-
+        public PlayerCosmetics PlayerCosmetics { get; private set; }
 
         public Player(string iD, string name, TeamType teamType)
         {
@@ -53,6 +53,26 @@ namespace BannerlordWrapper
                     Troop = Team.GetTroop(0);
                 }
             }
+        }
+
+        public void SetPlayerCosmetics(PlayerCosmetics cosmetics)
+        {
+            PlayerCosmetics = cosmetics;
+        }
+
+        public void ClearPlayerCosmetics()
+        {
+            PlayerCosmetics = null;
+        }
+
+        public bool PlayerHasCosmetics()
+        {
+            return PlayerCosmetics != null;
+        }
+
+        public bool PlayerHasLordArmor()
+        {
+            return PlayerCosmetics != null && PlayerCosmetics.IsLordArmor();
         }
 
         public override string ToString()

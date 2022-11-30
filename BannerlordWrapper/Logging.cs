@@ -54,8 +54,8 @@ namespace BannerlordWrapper
 
         public void StopLogging()
         {
-            start = false;
             Info("Stopped Logging");
+            start = false;
         }
 
         public void Trace(string message)

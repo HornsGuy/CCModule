@@ -19,6 +19,11 @@ namespace CCModuleServerOnly.Wrappers
         protected override void OnPlayerConnect(VirtualPlayer peer)
         {
             PlayerWrapper.Instance.AddPlayer(new BannerlordWrapper.Player(peer.Id.ToString(), peer.UserName, TeamType.Spectator));
+            PlayerCosmetics playerCosmetics = EquipmentOverride.Instance.GetLoadedCosmeticsIfTheyExist(peer.Id.ToString());
+            if (playerCosmetics != null)
+            {
+                PlayerWrapper.Instance.SetPlayerCosmetics(peer.Id.ToString(), playerCosmetics);
+            }
         }
 
         protected override void OnPlayerDisconnect(VirtualPlayer peer)

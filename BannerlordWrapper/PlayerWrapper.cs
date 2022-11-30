@@ -153,5 +153,42 @@ namespace BannerlordWrapper
             return toReturn;
         }
 
+        public void SetPlayerCosmetics(string ID, PlayerCosmetics playerCosmetics)
+        {
+            if (_players.ContainsKey(ID))
+            {
+                _players[ID].SetPlayerCosmetics(playerCosmetics);
+            }
+        }
+
+        public bool PlayerHasCosmetics(string ID)
+        {
+            if (_players.ContainsKey(ID))
+            {
+                return _players[ID].PlayerCosmetics != null;
+            }
+            return false;
+        }
+
+        public bool PlayerHasLordArmor(string ID)
+        {
+            if (_players.ContainsKey(ID))
+            {
+                return _players[ID].PlayerHasLordArmor();
+            }
+            return false;
+        }
+
+        public void ClearAllCosmetics()
+        {
+            foreach (var player in _players.Values)
+            {
+                if(!player.PlayerHasLordArmor())
+                {
+                    player.ClearPlayerCosmetics();
+                }
+            }
+        }
+
     }
 }

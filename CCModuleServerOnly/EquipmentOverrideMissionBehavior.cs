@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using TaleWorlds.Library;
 using System.Threading;
 using TaleWorlds.ObjectSystem;
+using BannerlordWrapper;
 
 namespace CCModuleServerOnly
 {
@@ -43,6 +44,13 @@ namespace CCModuleServerOnly
 
         public EquipmentOverride()
         {
+        }
+
+        public void Setup()
+        {
+            PlayerWrapper.Instance.ClearAllCosmetics();
+            equipmentToOverride.Clear();
+
             if (File.Exists(jsonPath))
             {
                 Debug.Print("Loadding equipment.json", 0, Debug.DebugColor.Yellow);
@@ -68,11 +76,6 @@ namespace CCModuleServerOnly
                 string jsonContents = JsonConvert.SerializeObject(toSerialize, Formatting.Indented);
                 File.WriteAllText(jsonPath, jsonContents);
             }
-        }
-
-        public void Setup()
-        {
-
         }
 
         private EquipmentData generateExampleData()
@@ -112,19 +115,65 @@ namespace CCModuleServerOnly
             return toReturn;
         }
 
-        public bool PlayerHasEquipmentToBeOverridden(string ID)
+        public PlayerCosmetics GetLoadedCosmeticsIfTheyExist(string ID)
         {
-            return equipmentToOverride.ContainsKey(ID);
+            if(equipmentToOverride.ContainsKey(ID))
+            {
+                string head = "";
+                string shoulder = "";
+                string body = "";
+                string hands = "";
+                string legs = "";
+                foreach (var overrideItem in equipmentToOverride[ID])
+                {
+                    switch (overrideItem.Item1)
+                    {
+                        case EquipmentIndex.Head:
+                            head = overrideItem.Item2;
+                            break;
+                        case EquipmentIndex.Body:
+                            body = overrideItem.Item2;
+                            break;
+                        case EquipmentIndex.Leg:
+                            legs = overrideItem.Item2;
+                            break;
+                        case EquipmentIndex.Gloves:
+                            hands = overrideItem.Item2;
+                            break;
+                        case EquipmentIndex.Cape:
+                            shoulder = overrideItem.Item2;
+                            break;
+                    }
+                }
+                return new PlayerCosmetics(head, shoulder, body, hands, legs, true);
+            }
+            return null;
+        }
+
+        private List<Tuple<EquipmentIndex, string>> PlayerCosmeticsToTuples(PlayerCosmetics playerCosmetics)
+        {
+            List<Tuple<EquipmentIndex, string>> toReturn = new List<Tuple<EquipmentIndex, string>>();
+
+            toReturn.Add(new Tuple<EquipmentIndex,string>(EquipmentIndex.Head, playerCosmetics.HeadItem));
+            toReturn.Add(new Tuple<EquipmentIndex,string>(EquipmentIndex.Cape, playerCosmetics.ShoulderItem));
+            toReturn.Add(new Tuple<EquipmentIndex,string>(EquipmentIndex.Body, playerCosmetics.BodyItem));
+            toReturn.Add(new Tuple<EquipmentIndex,string>(EquipmentIndex.Gloves, playerCosmetics.HandItem));
+            toReturn.Add(new Tuple<EquipmentIndex,string>(EquipmentIndex.Leg, playerCosmetics.LegItem));
+
+            return toReturn;
         }
 
         public Equipment GetOverriddenEquipment(string ID, Equipment originalEquipment)
         {
+
             Equipment newEquipment = originalEquipment;
 
-            foreach (var itemToOverride in equipmentToOverride[ID])
+            PlayerCosmetics cosmetics = PlayerWrapper.Instance.GetPlayer(ID).PlayerCosmetics;
+
+            foreach (var itemToOverride in PlayerCosmeticsToTuples(cosmetics))
             {
                 ItemObject item = MBObjectManager.Instance.GetObject<ItemObject>(itemToOverride.Item2);
-                if(item != null)
+                if (item != null)
                 {
                     EquipmentElement equipmentElement = originalEquipment[itemToOverride.Item1];
                     equipmentElement.CosmeticItem = item;

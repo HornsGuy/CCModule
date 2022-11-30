@@ -1,4 +1,5 @@
-﻿using NetworkMessages.FromServer;
+﻿using BannerlordWrapper;
+using NetworkMessages.FromServer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace CCModuleServerOnly.HarmonyPatches
 {
     class PatchMission
     {
-        public static bool Prefix(Mission __instance, AgentBuildData agentBuildData, bool spawnFromAgentVisuals, int formationTroopCount)
+        public static bool Prefix(Mission __instance, ref AgentBuildData agentBuildData, bool spawnFromAgentVisuals, int formationTroopCount)
         {
             MissionPeer curPeer = agentBuildData.AgentMissionPeer;
             if(curPeer != null)
@@ -22,7 +23,7 @@ namespace CCModuleServerOnly.HarmonyPatches
                 if(netPeer != null && netPeer.VirtualPlayer != null && netPeer.VirtualPlayer.Id != null)
                 {
                     string ID = netPeer.VirtualPlayer.Id.ToString();
-                    if(EquipmentOverride.Instance.PlayerHasEquipmentToBeOverridden(ID) && agentBuildData.AgentData != null && agentBuildData.AgentData.AgentOverridenEquipment != null)
+                    if(PlayerWrapper.Instance.PlayerHasCosmetics(ID) && agentBuildData.AgentData != null && agentBuildData.AgentData.AgentOverridenEquipment != null)
                     {
                         Equipment newEquipment = EquipmentOverride.Instance.GetOverriddenEquipment(ID, agentBuildData.AgentData.AgentOverridenEquipment);
                         agentBuildData = agentBuildData.Equipment(newEquipment);
